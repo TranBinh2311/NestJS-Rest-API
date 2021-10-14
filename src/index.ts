@@ -15,7 +15,7 @@ app.use(express.json())
 
 // #5
 app.get('/artists', async (req, res) => {
-  const artists = await prisma.artist.findMany()
+  const artists = await prisma.user.findMany()
   res.json({
     success: true,
     payload: artists,
