@@ -1,39 +1,19 @@
-import { PrismaClient } from '@prisma/client'
-import {add} from 'date-fns'
-const prisma = new PrismaClient()
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import  { DocumentBuilder, SwaggerModule } from  '@nestjs/swagger'
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.setGlobalPrefix('api')
 
-const weekFromNow =  add(new Date(), {days: 7})
-const twoFromNow =  add(new Date(), {days: 7})
-const monthFromNow =  add(new Date(), {days: 7})
+  const options = new DocumentBuilder()
+  .setTitle(' Appoinment API')
+  .setDescription('Appoinment Api')
+  .setVersion('5.1.0')
+  .build()
 
-async function main() {
-  const newUser = await prisma.user.create({
-    data:{
-      email : "a@gmail.com",
-      firstName: "Binh",
-      lastName: "Tran",
-      birthdate: weekFromNow,
-      role : "DOCTOR",
-      timeStamp: twoFromNow,
-      timeZone: monthFromNow,
-      appointments: {
-        create: {
-          startTime : weekFromNow,
-          endTime: monthFromNow,
-        }
-      }
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup('api', app, document);
 
-    }
-  })
-  console.log('Created new user: ', newUser)
-
-  const allUsers = await prisma.user.findMany({
-    include: { appointments: true },
-  })
-  console.log('All users: ')
-  console.dir(allUsers, { depth: null })
+  await app.listen(3000);
 }
-
-main()
-  .catch((e) => console.error(e))
-  .finally(async () => await prisma.$disconnect())
+bootstrap();
