@@ -16,33 +16,33 @@ export class AppointmentController {
         return appts;
     }
 
-    @Get(':id')
-    async findOneAppt(@Param('id') id: string) {
+    @Get(':email')
+    async findOneAppt(@Param('email') id: string) {
         const appt = await this.appointmentService.appointment(id);
         return appt;
     }
 
-    @Post('apptsByUser')
+   @Post('listAppByUser')
     async findApptsByUser(@Body() filter: getApptsDTO) {
         const appts = await this.appointmentService.appointmentsByUser(filter);
         return appts;
     }
 
-    @Post('createAppt')
+    @Post('createApp')
     async createOneAppt(@Body() input: CreateAppointmentDto) {
-        const newAppt = await this.appointmentService.createAppt(input);
+        const newAppt = await this.appointmentService.createApp(input);
         return newAppt;
     }
 
     @Patch('updateAppt/:id')
     async updateOneAppt(@Param('id') id: string, @Body() input: UpdateAppointmentDto) {
-        const apptUpdated = await this.appointmentService.updateAppt(id, input);
+        const apptUpdated = await this.appointmentService.updateApp(id, input);
         return apptUpdated;
     }
 
     @Delete('deleteUser/:id')
     async deleteOneAppt(@Param('id') id: string) {
-        const apptDeleted = await this.appointmentService.deleteAppt(id);
+        const apptDeleted = await this.appointmentService.deleteApp(id);
         return apptDeleted;
     }
 }

@@ -11,29 +11,47 @@ import {
   ApptException,
 } from '../exceptions/exception';
 import { PrismaError } from '../utils/prismaError';
+import { emit } from 'process';
 
 @Injectable()
 export class AppointmentService {
 
   constructor(private prisma: PrismaService){}
 
-  // Get a single appointment
-  async appointment(id: string): Promise<Appointment | null> {
-    const appt = await this.prisma.appointment.findUnique({
+  // Get a single appointment by email user
+  async appointment(email: string): Promise<Appointment | null> {
+
+    //const today = new Date();
+    // get in4 User by email
+    const userExist = await this.prisma.user.findUnique({
         where: {
-            id: parseInt(id),
+            email: email,
+        },
+    });
+
+    if (!userExist) 
+    {
+        throw new HttpException(
+            'Not found user',
+            HttpStatus.BAD_REQUEST,
+        );
+    }
+    // get in4 appoint by user.id
+    const app = await this.prisma.appointment.findUnique({
+        where: {
+            id: userExist.id,
         },
         include: {
             toUser: true, // Return all fields
         },
     });
 
-    if (!appt) throw new HttpException(
+    if (!app) throw new HttpException(
       'Appointment not found',
       HttpStatus.BAD_REQUEST,
     )
 
-    return appt;
+    return app;
 }
 
 // Get multiple posts
@@ -47,59 +65,63 @@ async appointments(): Promise<Appointment[]> {
 }
 
 //get list appointment by user
-async appointmentsByUser(filter: getApptsDTO): Promise<Appointment[]> {
-    const today = new Date();
-    const userExist = await this.prisma.user.findUnique({
-        where: {
-            id: parseInt(filter.toUser),
-        },
-    });
+    async appointmentsByUser(filter: getApptsDTO): Promise<Appointment[]> {
+        const today = new Date();
+        const userExist = await this.prisma.user.findUnique({
+            where: {
+                email: filter.toUser,
+            },
+        });
 
-    if (!userExist) throw new UserException(parseInt(filter.toUser));
+        if (!userExist) 
+        {
+            throw new HttpException(
+                'User not found',
+                HttpStatus.BAD_REQUEST,
+            );
+        }
 
-    const startDate = new Date(Date.parse(filter.startTime));
-    const endDate = new Date(Date.parse(filter.endTime));
+        const startDate = new Date(Date.parse(filter.startTime));
+        const endDate = new Date(Date.parse(filter.endTime));
 
-    if (Date.parse(filter.startTime) < today.valueOf()) {
-        throw new HttpException(
-            'Start date must be greater than today',
-            HttpStatus.BAD_REQUEST,
-        );
-    }
+        if (Date.parse(filter.startTime) < today.valueOf()) {
+            throw new HttpException(
+                'Start date must be greater than today',
+                HttpStatus.BAD_REQUEST,
+            );
+        }
 
-    if (Date.parse(filter.startTime) > Date.parse(filter.endTime)) {
-        throw new HttpException(
-            'End date must be greater than start date',
-            HttpStatus.BAD_REQUEST,
-        );
-    }
+        if (Date.parse(filter.startTime) > Date.parse(filter.endTime)) {
+            throw new HttpException(
+                'End date must be greater than start date',
+                HttpStatus.BAD_REQUEST,
+            );
+        }
 
-    const appointments = await this.prisma.appointment.findMany({
-        where: {
-            AND: [
-                { userId: parseInt(filter.toUser) },
-                {
-                    startTime: {
-                        gte: startDate,
+        const appointments = await this.prisma.appointment.findMany({
+            where: {
+                AND: [
+                    { userId: userExist.id },
+                    {
+                        startTime: {
+                            gte: startDate,
+                        },
                     },
-                },
-                {
-                    endTime: {
-                        lte: endDate,
+                    {
+                        endTime: {
+                            lte: endDate,
+                        },
                     },
-                },
-            ],
-        },
-        include: {
-            toUser: true, // Return all fields
-        },
-    });
-
-    return appointments;
-}
-
+                ],
+            },
+            include: {
+                toUser: true, // Return all fields
+            },
+        });
+        return appointments;
+    }
 // Create an appointment
-async createAppt(input: CreateAppointmentDto): Promise<Appointment> {
+async createApp(input: CreateAppointmentDto): Promise<Appointment> {
     const today = new Date();
     const userExist = await this.prisma.user.findUnique({
         where: {
@@ -129,9 +151,6 @@ async createAppt(input: CreateAppointmentDto): Promise<Appointment> {
         );
     }
 
-    console.log(Date.parse(input.startTime));
-    console.log(Date.parse(input.endTime));
-
     const newAppt = await this.prisma.appointment.create({
         data: {
             ...input,
@@ -149,7 +168,7 @@ async createAppt(input: CreateAppointmentDto): Promise<Appointment> {
 }
 
 // Update an appointment
-async updateAppt(id: string, params: UpdateAppointmentDto): Promise<Appointment> {
+async updateApp(id: string, params: UpdateAppointmentDto): Promise<Appointment> {
     const { startTime, endTime } = params;
     const today = new Date();
 
@@ -194,7 +213,7 @@ async updateAppt(id: string, params: UpdateAppointmentDto): Promise<Appointment>
 }
 
 // delete an appointment
-async deleteAppt(id: string): Promise<Appointment> {
+async deleteApp(id: string): Promise<Appointment> {
     try {
         const deleteAppt = await this.prisma.appointment.delete({
             where: {

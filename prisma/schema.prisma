@@ -15,7 +15,7 @@ model User {
   email        String        @unique
   firstName    String
   lastName     String
-  birthdate    String? //@updatedAt
+  birthdate    DateTime? //@updatedAt
   role         UserRole   @default(DOCTOR)
   createdAt    DateTime      @default(now())
   appointments Appointment[]

@@ -22,11 +22,12 @@ export class CreateUserDto {
     lastName: string;
 
     @ApiProperty()
+    @IsString()
     birthdate : string ;
 
 
-    @IsEnum(EnumUserRole)
     @ApiProperty()
+    @IsEnum(EnumUserRole)
     role : EnumUserRole;
 
     // @ApiProperty()
