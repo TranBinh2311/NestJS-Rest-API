@@ -32,11 +32,18 @@ let AppointmentController = class AppointmentController {
         return appts;
     }
     async createOneApp(input) {
-        const errors = input.validate();
+        console.log(typeof input.validate);
+        const errors = input.validate;
         if (errors.length > 0) {
             throw new common_1.BadRequestException(errors);
         }
-        const newAppt = await this.appointmentService.createApp(input);
+        const { toUser, startTime, endTime, timeZone } = input;
+        const newAppt = await this.appointmentService.createApp({
+            toUser,
+            startTime,
+            endTime,
+            timeZone
+        });
         return newAppt;
     }
     async updateOneAppt(id, input) {
@@ -49,7 +56,7 @@ let AppointmentController = class AppointmentController {
     }
 };
 __decorate([
-    (0, common_1.Get)('getUserById/:id'),
+    (0, common_1.Get)('getById/:id'),
     (0, swagger_1.ApiResponse)({
         status: 200,
         description: 'Get Appointment By Id'

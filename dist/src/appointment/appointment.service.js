@@ -27,17 +27,12 @@ let AppointmentService = class AppointmentService {
     }
     async appointmentsByUser(filter) {
         const today = new Date();
-        const userExist = await this.prisma.user.findUnique({
-            where: {
-                id: filter.toUser,
-            },
-        });
         const startDate = new Date(Date.parse(filter.startTime));
         const endDate = new Date(Date.parse(filter.endTime));
         const appointments = await this.prisma.appointment.findMany({
             where: {
                 AND: [
-                    { userId: userExist.id },
+                    { userId: filter.toUser },
                     {
                         startTime: {
                             gte: startDate,
@@ -53,19 +48,18 @@ let AppointmentService = class AppointmentService {
         });
         return appointments;
     }
-    async createApp(input) {
-        const today = new Date();
-        const userExist = await this.prisma.user.findUnique({
-            where: {
-                id: input.toUser,
-            },
-        });
+    async createApp({ toUser, startTime, endTime, timeZone }) {
         const newApp = await this.prisma.appointment.create({
-            data: Object.assign(Object.assign({}, input), { toUser: {
+            data: {
+                startTime,
+                endTime,
+                timeZone,
+                toUser: {
                     connect: {
-                        id: input.toUser,
+                        id: toUser,
                     },
-                } })
+                },
+            }
         });
         return newApp;
     }

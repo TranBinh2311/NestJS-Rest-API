@@ -25,7 +25,7 @@ class CreateAppointmentDto extends appointment_entity_1.checkValid {
         if (startDate < today) {
             errors.push("'Start' must be greater than 'Today'");
         }
-        if (this.isValidTimeZone(this.timeZone) == true) {
+        if (this.isValidTimeZone(this.timeZone) === true) {
             errors.push("'Timezone' must be a valid IANA time zone");
         }
         else {
