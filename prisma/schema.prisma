@@ -7,7 +7,8 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity", "interactiveTransactions", "dataProxy"]
 }
 
 model User {
@@ -16,8 +17,9 @@ model User {
   firstName    String
   lastName     String
   birthdate    DateTime? //@updatedAt
-  role         UserRole   @default(DOCTOR)
+  role         UserRole      @default(DOCTOR)
   createdAt    DateTime      @default(now())
+  updateAt     DateTime      @updatedAt
   appointments Appointment[]
 }
 
@@ -26,9 +28,10 @@ model Appointment {
   startTime DateTime //@updatedAt
   endTime   DateTime //@updatedAt
   userId    Int
-  toUser    User     @relation(fields: [userId], references: [id])
+  toUser    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  timeZone  String  
   createAt  DateTime @default(now())
-
+  updateAt  DateTime @updatedAt
 }
 
 enum UserRole {

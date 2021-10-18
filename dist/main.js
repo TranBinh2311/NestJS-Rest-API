@@ -7,8 +7,8 @@ async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.setGlobalPrefix('api');
     const options = new swagger_1.DocumentBuilder()
-        .setTitle(' Conduct Blog API')
-        .setDescription('Conduct Blog Api')
+        .setTitle(' Appoinment API')
+        .setDescription('Appoinment Api')
         .setVersion('5.1.0')
         .build();
     const document = swagger_1.SwaggerModule.createDocument(app, options);

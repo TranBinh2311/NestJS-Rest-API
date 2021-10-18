@@ -1,16 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
+import { CreateAppointmentDto } from './create-appointment.dto';
 
-export class getApptsDTO {
-    @ApiProperty()
-    @IsString()
-    toUser: string;
 
-    @ApiProperty()
-    @IsString()
-    startTime: string;
-
-    @ApiProperty()
-    @IsString()
-    endTime: string;
+export class getApptsDTO extends PartialType(CreateAppointmentDto) {
+  
 }

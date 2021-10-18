@@ -37,11 +37,12 @@ __decorate([
 ], CreateUserDto.prototype, "lastName", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "birthdate", void 0);
 __decorate([
-    (0, class_validator_1.IsEnum)(enum_role_1.EnumUserRole),
     (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsEnum)(enum_role_1.EnumUserRole),
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "role", void 0);
 CreateUserDto = __decorate([

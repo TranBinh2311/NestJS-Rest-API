@@ -23,11 +23,7 @@ let AppointmentController = class AppointmentController {
     constructor(appointmentService) {
         this.appointmentService = appointmentService;
     }
-    async findAllAppts() {
-        const appts = await this.appointmentService.appointments();
-        return appts;
-    }
-    async findOneAppt(id) {
+    async findOneApp(id) {
         const appt = await this.appointmentService.appointment(id);
         return appt;
     }
@@ -35,59 +31,77 @@ let AppointmentController = class AppointmentController {
         const appts = await this.appointmentService.appointmentsByUser(filter);
         return appts;
     }
-    async createOneAppt(input) {
-        const newAppt = await this.appointmentService.createAppt(input);
+    async createOneApp(input) {
+        const errors = input.validate();
+        if (errors.length > 0) {
+            throw new common_1.BadRequestException(errors);
+        }
+        const newAppt = await this.appointmentService.createApp(input);
         return newAppt;
     }
     async updateOneAppt(id, input) {
-        const apptUpdated = await this.appointmentService.updateAppt(id, input);
+        const apptUpdated = await this.appointmentService.updateApp(id, input);
         return apptUpdated;
     }
     async deleteOneAppt(id) {
-        const apptDeleted = await this.appointmentService.deleteAppt(id);
+        const apptDeleted = await this.appointmentService.deleteApp(id);
         return apptDeleted;
     }
 };
 __decorate([
-    (0, common_1.Get)(),
+    (0, common_1.Get)('getUserById/:id'),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Get Appointment By Id'
+    }),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
-], AppointmentController.prototype, "findAllAppts", null);
+], AppointmentController.prototype, "findOneApp", null);
 __decorate([
-    (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], AppointmentController.prototype, "findOneAppt", null);
-__decorate([
-    (0, common_1.Post)('apptsByUser'),
+    (0, common_1.Post)('listAppByUser'),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'get list App Follow User'
+    }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [appointment_dto_1.getApptsDTO]),
     __metadata("design:returntype", Promise)
 ], AppointmentController.prototype, "findApptsByUser", null);
 __decorate([
-    (0, common_1.Post)('createAppt'),
+    (0, common_1.Post)('createApp'),
+    (0, swagger_1.ApiResponse)({
+        status: 201,
+        description: 'Create Appointment'
+    }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_appointment_dto_1.CreateAppointmentDto]),
     __metadata("design:returntype", Promise)
-], AppointmentController.prototype, "createOneAppt", null);
+], AppointmentController.prototype, "createOneApp", null);
 __decorate([
     (0, common_1.Patch)('updateAppt/:id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Update Appointment'
+    }),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_appointment_dto_1.UpdateAppointmentDto]),
+    __metadata("design:paramtypes", [Number, update_appointment_dto_1.UpdateAppointmentDto]),
     __metadata("design:returntype", Promise)
 ], AppointmentController.prototype, "updateOneAppt", null);
 __decorate([
     (0, common_1.Delete)('deleteUser/:id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, swagger_1.ApiResponse)({
+        status: 204,
+        description: 'Delete Appointment'
+    }),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], AppointmentController.prototype, "deleteOneAppt", null);
 AppointmentController = __decorate([

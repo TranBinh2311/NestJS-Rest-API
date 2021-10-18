@@ -20,47 +20,24 @@ let AppointmentService = class AppointmentService {
         this.prisma = prisma;
     }
     async appointment(id) {
-        const appt = await this.prisma.appointment.findUnique({
-            where: {
-                id: parseInt(id),
-            },
-            include: {
-                toUser: true,
-            },
+        const app = await this.prisma.appointment.findUnique({
+            where: { id }
         });
-        if (!appt)
-            throw new common_1.HttpException('Appointment not found', common_1.HttpStatus.BAD_REQUEST);
-        return appt;
-    }
-    async appointments() {
-        const appointments = await this.prisma.appointment.findMany({
-            include: {
-                toUser: true,
-            },
-        });
-        return appointments;
+        return app;
     }
     async appointmentsByUser(filter) {
         const today = new Date();
         const userExist = await this.prisma.user.findUnique({
             where: {
-                id: parseInt(filter.toUser),
+                id: filter.toUser,
             },
         });
-        if (!userExist)
-            throw new exception_1.UserException(parseInt(filter.toUser));
         const startDate = new Date(Date.parse(filter.startTime));
         const endDate = new Date(Date.parse(filter.endTime));
-        if (Date.parse(filter.startTime) < today.valueOf()) {
-            throw new common_1.HttpException('Start date must be greater than today', common_1.HttpStatus.BAD_REQUEST);
-        }
-        if (Date.parse(filter.startTime) > Date.parse(filter.endTime)) {
-            throw new common_1.HttpException('End date must be greater than start date', common_1.HttpStatus.BAD_REQUEST);
-        }
         const appointments = await this.prisma.appointment.findMany({
             where: {
                 AND: [
-                    { userId: parseInt(filter.toUser) },
+                    { userId: userExist.id },
                     {
                         startTime: {
                             gte: startDate,
@@ -72,57 +49,32 @@ let AppointmentService = class AppointmentService {
                         },
                     },
                 ],
-            },
-            include: {
-                toUser: true,
-            },
+            }
         });
         return appointments;
     }
-    async createAppt(input) {
+    async createApp(input) {
         const today = new Date();
         const userExist = await this.prisma.user.findUnique({
             where: {
-                email: input.toUser,
+                id: input.toUser,
             },
         });
-        if (!userExist) {
-            throw new common_1.HttpException('User not found', common_1.HttpStatus.BAD_REQUEST);
-        }
-        if (Date.parse(input.startTime) < today.valueOf()) {
-            throw new common_1.HttpException('Start date must be greater than today', common_1.HttpStatus.BAD_REQUEST);
-        }
-        if (Date.parse(input.startTime) > Date.parse(input.endTime)) {
-            throw new common_1.HttpException('End date must be greater than start date', common_1.HttpStatus.BAD_REQUEST);
-        }
-        console.log(Date.parse(input.startTime));
-        console.log(Date.parse(input.endTime));
-        const newAppt = await this.prisma.appointment.create({
+        const newApp = await this.prisma.appointment.create({
             data: Object.assign(Object.assign({}, input), { toUser: {
                     connect: {
-                        email: userExist.email,
+                        id: input.toUser,
                     },
-                } }),
-            include: {
-                toUser: true,
-            },
+                } })
         });
-        return newAppt;
+        return newApp;
     }
-    async updateAppt(id, params) {
+    async updateApp(id, params) {
         const { startTime, endTime } = params;
         const today = new Date();
-        if (Date.parse(startTime) < today.valueOf()) {
-            throw new common_1.HttpException('Start date must be greater than today', common_1.HttpStatus.BAD_REQUEST);
-        }
-        if (Date.parse(startTime) > Date.parse(endTime)) {
-            throw new common_1.HttpException('End date must be greater than start date', common_1.HttpStatus.BAD_REQUEST);
-        }
         try {
             const updateAppt = await this.prisma.appointment.update({
-                where: {
-                    id: parseInt(id),
-                },
+                where: { id },
                 data: Object.assign(Object.assign({}, (startTime && { startTime })), (endTime && { endTime })),
                 include: {
                     toUser: true,
@@ -133,27 +85,22 @@ let AppointmentService = class AppointmentService {
         catch (error) {
             if (error instanceof runtime_1.PrismaClientKnownRequestError &&
                 error.code === prismaError_1.PrismaError.RecordDoesNotExist) {
-                throw new exception_1.ApptException(parseInt(id));
+                throw new exception_1.ApptException(id);
             }
             throw error;
         }
     }
-    async deleteAppt(id) {
+    async deleteApp(id) {
         try {
             const deleteAppt = await this.prisma.appointment.delete({
-                where: {
-                    id: parseInt(id),
-                },
-                include: {
-                    toUser: true,
-                },
+                where: { id },
             });
             return deleteAppt;
         }
         catch (error) {
             if (error instanceof runtime_1.PrismaClientKnownRequestError &&
                 error.code === prismaError_1.PrismaError.RecordDoesNotExist) {
-                throw new exception_1.ApptException(parseInt(id));
+                throw new common_1.NotFoundException(`Not found ${id}`);
             }
             throw error;
         }

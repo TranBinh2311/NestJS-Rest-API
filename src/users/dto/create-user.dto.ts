@@ -3,64 +3,51 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsEmail, IsEnum, IsNotEmpty, IsString } from "class-validator";
 import { EnumUserRole } from "./enum_role";
 
-@Global()
+
 export class CreateUserDto {
+    /*---------------------------------------------------------------------------------------------*/
+    @ApiProperty({
+        description: 'Input must have email format ',
+        example: 'a@gmail.com'
+    })
     @IsEmail()
     @IsString()
     @IsNotEmpty()
-    @ApiProperty()
-    email: string;
+    readonly email: string;
 
+    /*---------------------------------------------------------------------------------------------*/
+    @ApiProperty({
+        description: 'Input can be not empty',
+        example: 'firstName'
+    })
     @IsString()
     @IsNotEmpty()
-    @ApiProperty()
-    firstName: string;
+    readonly firstName: string;
 
+    /*---------------------------------------------------------------------------------------------*/
+    @ApiProperty({
+        description: 'Input can be not empty',
+        example: 'lastName'
+    })
     @IsString()
     @IsNotEmpty()
-    @ApiProperty()
-    lastName: string;
+    readonly lastName: string;
 
-    @ApiProperty()
+    /*---------------------------------------------------------------------------------------------*/
+    @ApiProperty({
+        description: 'Input must have date format ',
+        example: '1999-11-23T00:00:00.000Z'
+    })
     @IsString()
-    birthdate : string ;
+    readonly birthdate: string;
 
-
-    @ApiProperty()
+    /*---------------------------------------------------------------------------------------------*/
+    @ApiProperty({
+        description: 'must be 1 of the following 3 styles [ DOCTOR, THERAPYCARE, MANAGER] ',
+        example: 'DOCTOR'
+    })
     @IsEnum(EnumUserRole)
-    role : EnumUserRole;
-
-    // @ApiProperty()
-    // timeStamp : Date ;
+    readonly role : EnumUserRole;
 }
-    // @ApiProperty()
-    // email: string;
+ 
 
-    // @ApiProperty()
-    // firstName: String;
-
-    // @ApiProperty()
-    // lastName :String ;
-
-    // @ApiProperty()
-    // birthdate : Date ;
-
-    // @ApiProperty()
-    // role : String;
-
-    // @ApiProperty()
-    // timeZone : Date;
-
-    // @ApiProperty()
-    // timeStamp : Date ;
-
-
-
-// email String @unique
-//     firstName String
-//     lastName String 
-//     birthdate DateTime @updatedAt
-//     role UserRole
-//     timeZone DateTime @updatedAt
-//     timeStamp DateTime @updatedAt
-//     appointments Appointment[]

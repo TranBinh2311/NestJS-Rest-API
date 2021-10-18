@@ -10,23 +10,61 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateAppointmentDto = void 0;
+const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
-class CreateAppointmentDto {
+const appointment_entity_1 = require("../valid/appointment.entity");
+class CreateAppointmentDto extends appointment_entity_1.checkValid {
+    validate() {
+        const errors = [];
+        const today = new Date().valueOf();
+        const startDate = Date.parse(this.startTime);
+        const endDate = Date.parse(this.endTime);
+        if (startDate > endDate) {
+            errors.push("'End' cannot be earlier than 'Start'");
+        }
+        if (startDate < today) {
+            errors.push("'Start' must be greater than 'Today'");
+        }
+        if (this.isValidTimeZone(this.timeZone) == true) {
+            errors.push("'Timezone' must be a valid IANA time zone");
+        }
+        else {
+            const now = new Date().toLocaleString("en-US", { timeZone: this.timeZone });
+        }
+        return errors;
+    }
 }
 __decorate([
-    (0, class_validator_1.IsString)(),
+    (0, swagger_1.ApiProperty)(),
     (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
+    __metadata("design:type", Number)
 ], CreateAppointmentDto.prototype, "toUser", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'Input must have date format ',
+        example: '1999-11-23T00:00:00.000Z'
+    }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateAppointmentDto.prototype, "startTime", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'Input must have date format ',
+        example: '1999-11-23T00:00:00.000Z'
+    }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateAppointmentDto.prototype, "endTime", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'IANA time zone string ',
+        example: 'VietNam/HaNoi'
+    }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], CreateAppointmentDto.prototype, "timeZone", void 0);
 exports.CreateAppointmentDto = CreateAppointmentDto;
 //# sourceMappingURL=create-appointment.dto.js.map
