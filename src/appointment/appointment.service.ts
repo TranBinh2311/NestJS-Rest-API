@@ -7,8 +7,8 @@ import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 
 import {
-  UserException,
-  ApptException,
+    UserException,
+    ApptException,
 } from '../exceptions/exception';
 import { PrismaError } from '../utils/prismaError';
 import { emit } from 'process';
@@ -17,23 +17,23 @@ import { NotFoundError } from 'rxjs';
 @Injectable()
 export class AppointmentService {
 
-  constructor(private prisma: PrismaService){}
+    constructor(private prisma: PrismaService) { }
 
-  // Get a single appointment by email user
-  async appointment(id: number): Promise<Appointment> {
+    // Get a single appointment by email user
+    async appointment(id: number): Promise<Appointment> {
 
-    // get in4 appoint by user.id
-    const app = await this.prisma.appointment.findUnique({
-        where: {id}
-    });
-    
-    return app;
-}
+        // get in4 appoint by user.id
+        const app = await this.prisma.appointment.findUnique({
+            where: { id }
+        });
 
-// Get multiple posts
+        return app;
+    }
+
+    // Get multiple posts
 
 
-//get list appointment by user
+    //get list appointment by user
     async appointmentsByUser(filter: getApptsDTO): Promise<Appointment[]> {
         const today = new Date();
         const startDate = new Date(Date.parse(filter.startTime));
@@ -58,87 +58,87 @@ export class AppointmentService {
         });
         return appointments;
     }
-// Create an appointment
-async createApp({
-    toUser,
-    startTime,
-    endTime,
-    timeZone
-}): Promise<Appointment> {
+    // Create an appointment
+    async createApp({
+        toUser,
+        startTime,
+        endTime,
+        timeZone
+    }): Promise<Appointment> {
 
-    const newApp = await this.prisma.appointment.create({
-        data: {
-            startTime,
-            endTime,
-            timeZone,
-            toUser: {
-                connect: {
-                    id: toUser,
+        const newApp = await this.prisma.appointment.create({
+            data: {
+                startTime,
+                endTime,
+                timeZone,
+                toUser: {
+                    connect: {
+                        id: toUser,
+                    },
                 },
-            },
-        }
-    });
-    return newApp;
-}
-
-// Update an appointment
-async updateApp(id: number, params: UpdateAppointmentDto): Promise<Appointment> {
-    const { startTime, endTime } = params;
-    const today = new Date();
-
-    // if (Date.parse(startTime) < today.valueOf()) {
-    //     throw new HttpException(
-    //         'Start date must be greater than today',
-    //         HttpStatus.BAD_REQUEST,
-    //     );
-    // }
-
-    // if (Date.parse(startTime) > Date.parse(endTime)) {
-    //     throw new HttpException(
-    //         'End date must be greater than start date',
-    //         HttpStatus.BAD_REQUEST,
-    //     );
-    // }
-
-    try {
-        const updateAppt = await this.prisma.appointment.update({
-            where: {id},
-            data : {
-                ...(startTime && { startTime }),
-                ...(endTime && { endTime }),
-            },
-            include: {
-                toUser: true, // Return all fields
-            },
+            }
         });
-
-        return updateAppt;
-    } catch (error) {
-        if (
-            error instanceof PrismaClientKnownRequestError &&
-            error.code === PrismaError.RecordDoesNotExist
-        ) {
-            throw new ApptException(id);
-        }
-        throw error;
+        return newApp;
     }
-}
 
-// delete an appointment
-async deleteApp(id: number): Promise<Appointment> {
-    try {
-        const deleteAppt = await this.prisma.appointment.delete({
-            where: {id},
-        });
-        return deleteAppt;
-    } catch (error) {
-        if (
-            error instanceof PrismaClientKnownRequestError &&
-            error.code === PrismaError.RecordDoesNotExist
-        ) {
-            throw new NotFoundException(`Not found ${id}`)
+    // Update an appointment
+    async updateApp(id: number, params: UpdateAppointmentDto): Promise<Appointment> {
+        const { startTime, endTime } = params;
+        const today = new Date();
+
+        // if (Date.parse(startTime) < today.valueOf()) {
+        //     throw new HttpException(
+        //         'Start date must be greater than today',
+        //         HttpStatus.BAD_REQUEST,
+        //     );
+        // }
+
+        // if (Date.parse(startTime) > Date.parse(endTime)) {
+        //     throw new HttpException(
+        //         'End date must be greater than start date',
+        //         HttpStatus.BAD_REQUEST,
+        //     );
+        // }
+
+        try {
+            const updateAppt = await this.prisma.appointment.update({
+                where: { id },
+                data: {
+                    ...(startTime && { startTime }),
+                    ...(endTime && { endTime }),
+                },
+                include: {
+                    toUser: true, // Return all fields
+                },
+            });
+
+            return updateAppt;
+        } catch (error) {
+            if (
+                error instanceof PrismaClientKnownRequestError &&
+                error.code === PrismaError.RecordDoesNotExist
+            ) {
+                throw new ApptException(id);
+            }
+            throw error;
         }
-        throw error;
     }
-}
+
+    // delete an appointment
+    async deleteApp(id: number): Promise<Appointment> {
+        try {
+            const deleteAppt = await this.prisma.appointment.delete({
+                where: { id },
+            });
+            return deleteAppt;
+        } catch (error) {
+            if (
+                error instanceof PrismaClientKnownRequestError &&
+                error.code === PrismaError.RecordDoesNotExist
+            ) {
+                throw new NotFoundException(`Not found ${id}`)
+            }
+            throw error;
+        }
+    }
 }

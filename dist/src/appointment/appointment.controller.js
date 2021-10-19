@@ -32,11 +32,6 @@ let AppointmentController = class AppointmentController {
         return appts;
     }
     async createOneApp(input) {
-        console.log(typeof input.validate);
-        const errors = input.validate;
-        if (errors.length > 0) {
-            throw new common_1.BadRequestException(errors);
-        }
         const { toUser, startTime, endTime, timeZone } = input;
         const newAppt = await this.appointmentService.createApp({
             toUser,

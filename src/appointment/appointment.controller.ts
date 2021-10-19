@@ -3,7 +3,6 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AppointmentService } from './appointment.service';
 import { getApptsDTO } from './dto/appointment.dto';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
-import { CreateForm } from './dto/createForm';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 
 @Controller('appointment')
@@ -37,15 +36,13 @@ export class AppointmentController {
         description: 'Create Appointment'
     })
     async createOneApp(@Body() input: CreateAppointmentDto) {
-        console.log(typeof input.validate);
+        //console.log(typeof input.validate);    
+        // const errors = input.validate;
+        // if (errors.length > 0) {
+        //     throw new BadRequestException(errors)
+        // }
         
-        const errors = input.validate;
-        if(errors.length > 0)
-        {
-            throw new BadRequestException(errors)
-        }
-
-        const  {
+        const {
             toUser,
             startTime,
             endTime,

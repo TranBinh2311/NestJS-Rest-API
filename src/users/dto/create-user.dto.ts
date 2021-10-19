@@ -1,5 +1,5 @@
 import { Global } from "@nestjs/common";
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { IsEmail, IsEnum, IsNotEmpty, IsString } from "class-validator";
 import { EnumUserRole } from "./enum_role";
 
@@ -34,7 +34,7 @@ export class CreateUserDto {
     readonly lastName: string;
 
     /*---------------------------------------------------------------------------------------------*/
-    @ApiProperty({
+    @ApiPropertyOptional({
         description: 'Input must have date format ',
         example: '1999-11-23T00:00:00.000Z'
     })

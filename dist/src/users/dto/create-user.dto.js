@@ -44,7 +44,7 @@ __decorate([
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "lastName", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({
+    (0, swagger_1.ApiPropertyOptional)({
         description: 'Input must have date format ',
         example: '1999-11-23T00:00:00.000Z'
     }),

@@ -15,23 +15,23 @@ const class_validator_1 = require("class-validator");
 const appointment_entity_1 = require("../valid/appointment.entity");
 class CreateAppointmentDto extends appointment_entity_1.checkValid {
     validate() {
-        const errors = [];
+        const loi = [];
         const today = new Date().valueOf();
         const startDate = Date.parse(this.startTime);
         const endDate = Date.parse(this.endTime);
         if (startDate > endDate) {
-            errors.push("'End' cannot be earlier than 'Start'");
+            loi.push("'End' cannot be earlier than 'Start'");
         }
         if (startDate < today) {
-            errors.push("'Start' must be greater than 'Today'");
+            loi.push("'Start' must be greater than 'Today'");
         }
         if (this.isValidTimeZone(this.timeZone) === true) {
-            errors.push("'Timezone' must be a valid IANA time zone");
+            loi.push("'Timezone' must be a valid IANA time zone");
         }
         else {
             const now = new Date().toLocaleString("en-US", { timeZone: this.timeZone });
         }
-        return errors;
+        return loi;
     }
 }
 __decorate([
