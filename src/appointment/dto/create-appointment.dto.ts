@@ -1,8 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsString } from "class-validator";
+import { error } from "console";
 import { checkValid } from '../valid/appointment.entity'
 
-export class CreateAppointmentDto extends checkValid {
+export class CreateAppointmentDto extends checkValid  {
 
 
     
@@ -37,29 +38,30 @@ export class CreateAppointmentDto extends checkValid {
 
     validate(): string[] {
 
-        const loi = [];
+        const errors = [];
         const today = new Date().valueOf();
         const startDate = Date.parse(this.startTime)
         const endDate = Date.parse(this.endTime)
 
 
         if (startDate > endDate) {
-            loi.push("'End' cannot be earlier than 'Start'")
+            errors.push("'End' cannot be earlier than 'Start'")
         }
 
         if (startDate < today) {
-            loi.push("'Start' must be greater than 'Today'")
+            errors.push("'Start' must be greater than 'Today'")
         }
 
 
         if (this.isValidTimeZone(this.timeZone) === true) {
-            loi.push("'Timezone' must be a valid IANA time zone")
+            errors.push("'Timezone' must be a valid IANA time zone")
         }
         else {
             const now = new Date().toLocaleString("en-US", { timeZone: this.timeZone });
+            console.log(now);  
         }
 
-        return loi;
+        return errors;
     }
 
 

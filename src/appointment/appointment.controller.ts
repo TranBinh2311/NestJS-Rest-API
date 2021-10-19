@@ -36,12 +36,14 @@ export class AppointmentController {
         description: 'Create Appointment'
     })
     async createOneApp(@Body() input: CreateAppointmentDto) {
-        //console.log(typeof input.validate);    
-        // const errors = input.validate;
+        //console.log(typeof input.validate);   
+        // console.log( typeof input.validate());
+         
+        // const errors = input.validate();
         // if (errors.length > 0) {
         //     throw new BadRequestException(errors)
         // }
-        
+
         const {
             toUser,
             startTime,

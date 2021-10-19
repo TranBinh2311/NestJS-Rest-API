@@ -47,7 +47,7 @@ export class CreateUserDto {
         example: 'DOCTOR'
     })
     @IsEnum(EnumUserRole)
-    readonly role : EnumUserRole;
+    readonly role: EnumUserRole;
 }
- 
+
 

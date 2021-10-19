@@ -6,10 +6,6 @@ import { getApptsDTO } from './dto/appointment.dto';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 
-import {
-    UserException,
-    ApptException,
-} from '../exceptions/exception';
 import { PrismaError } from '../utils/prismaError';
 import { emit } from 'process';
 import { NotFoundError } from 'rxjs';
@@ -23,11 +19,9 @@ export class AppointmentService {
     async appointment(id: number): Promise<Appointment> {
 
         // get in4 appoint by user.id
-        const app = await this.prisma.appointment.findUnique({
+        return await this.prisma.appointment.findUnique({
             where: { id }
         });
-
-        return app;
     }
 
     // Get multiple posts
@@ -66,7 +60,7 @@ export class AppointmentService {
         timeZone
     }): Promise<Appointment> {
 
-        const newApp = await this.prisma.appointment.create({
+        return await this.prisma.appointment.create({
             data: {
                 startTime,
                 endTime,
@@ -78,7 +72,7 @@ export class AppointmentService {
                 },
             }
         });
-        return newApp;
+
     }
 
     // Update an appointment
@@ -118,7 +112,7 @@ export class AppointmentService {
                 error instanceof PrismaClientKnownRequestError &&
                 error.code === PrismaError.RecordDoesNotExist
             ) {
-                throw new ApptException(id);
+                throw new NotFoundException();
             }
             throw error;
         }

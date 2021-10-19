@@ -1,6 +1,7 @@
 import { User } from '.prisma/client';
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import e from 'express';
+import { LoggerService } from 'src/logger/logger.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -8,7 +9,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 @Injectable()
 export class UsersService {
 
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService, private myLogger: LoggerService) { }
   /*Create Account*/
   async create(newUsers: CreateUserDto): Promise<User> {
     const result = await this.prisma.user.findUnique(
@@ -28,12 +29,13 @@ export class UsersService {
   }
   /*Find All User */
   async findAll(): Promise<User[]> {
+    this.myLogger.log(`Find All User`);
     const result = await this.prisma.user.findMany();
     return result;
   }
   /*Find by id */
   async findOne(id: number) {
-    const result = await this.prisma.user.findUnique({where:{id}})
+    const result = await this.prisma.user.findUnique({ where: { id } })
 
     if (!result) {
       throw new NotFoundException();
@@ -59,13 +61,13 @@ export class UsersService {
   /*Remove Account */
   async remove(id: number): Promise<User> {
 
-    const result = await this.prisma.user.findUnique({ where: {id} })
+    const result = await this.prisma.user.findUnique({ where: { id } })
     if (!result) {
       //user not found
       throw new NotFoundException();
     }
 
-    await this.prisma.user.delete({ where: { id} })
+    await this.prisma.user.delete({ where: { id } })
     return result;
   }
 

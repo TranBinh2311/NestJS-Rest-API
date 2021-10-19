@@ -4,5 +4,5 @@ import { CreateAppointmentDto } from './create-appointment.dto';
 
 
 export class getApptsDTO extends PartialType(CreateAppointmentDto) {
-  
+
 }

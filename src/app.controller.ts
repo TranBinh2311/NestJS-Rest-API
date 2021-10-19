@@ -6,7 +6,7 @@ import { PrismaService } from './prisma/prisma.service';
 export class AppController {
   constructor(private readonly appService: AppService,
     private prisma: PrismaService
-    ) {}
+  ) { }
 
   @Get()
   getHello(): string {
@@ -14,9 +14,9 @@ export class AppController {
   }
 
   @Get('users')
-  findAllUsers(){
-    return this.prisma.user.findMany({include: {appointments: true}})
+  findAllUsers() {
+    return this.prisma.user.findMany({ include: { appointments: true } })
   }
-  
+
 
 }

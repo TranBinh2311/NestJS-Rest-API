@@ -7,12 +7,12 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger';
 @Controller('users')
 @ApiTags('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @Post()
   @ApiResponse({
-     status: 201, 
-     description: 'Create User' 
+    status: 201,
+    description: 'Create User'
   })
   async create(@Body() newUsers: CreateUserDto) {
     return this.usersService.create(newUsers);
@@ -20,35 +20,35 @@ export class UsersController {
 
   @Get()
   @ApiResponse({
-    status: 200, 
-    description: 'Get All User' 
- })
+    status: 200,
+    description: 'Get All User'
+  })
   async findAll() {
     return this.usersService.findAll();
   }
 
   @Get(':id')
   @ApiResponse({
-    status: 200, 
-    description: 'Get User by ID' 
- })
-  async findOne(@Param('id',  ParseIntPipe) id: number) {
+    status: 200,
+    description: 'Get User by ID'
+  })
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.findOne(id);
   }
 
   @Patch('updateUser/:id')
   @ApiResponse({
-    status: 200, 
-    description: 'Update User' 
- })
+    status: 200,
+    description: 'Update User'
+  })
   async update(@Param('id', ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
   }
 
   @ApiResponse({
-    status: 204, 
-    description: 'Remove/Detele User' 
- })
+    status: 204,
+    description: 'Remove/Detele User'
+  })
   @Delete('deteleUser/:id')
   async remove(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.remove(id);
