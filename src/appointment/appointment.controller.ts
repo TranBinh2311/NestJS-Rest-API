@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, BadRequestException, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, BadRequestException, Query, UsePipes} from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Validate } from 'class-validator';
 import { AppointmentService } from './appointment.service';
 import { getApptsDTO } from './dto/appointment.dto';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
-
+import { ValidationPipe } from '../shared/validation.pip';
 @Controller('appointment')
 @ApiTags('appointment')
 export class AppointmentController {
@@ -30,12 +31,13 @@ export class AppointmentController {
         return appts;
     }
 
+    @UsePipes(new ValidationPipe())
     @Post('createApp')
     @ApiResponse({
         status: 201,
         description: 'Create Appointment'
     })
-    async createOneApp(@Body() input: CreateAppointmentDto) {
+    async createOneApp(@Body() input: Partial<CreateAppointmentDto>) {
         //console.log(typeof input.validate);   
         // console.log( typeof input.validate());
          

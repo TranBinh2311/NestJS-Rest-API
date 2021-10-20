@@ -51,6 +51,6 @@ export class UsersController {
   })
   @Delete('deteleUser/:id')
   async remove(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.remove(id);
+    return this.usersService.remove(id); 
   }
 }
