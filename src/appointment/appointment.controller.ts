@@ -5,7 +5,7 @@ import { AppointmentService } from './appointment.service';
 import { getApptsDTO } from './dto/appointment.dto';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
-import { ValidationPipe } from '../shared/validation.pip';
+import { ValidationPipe } from './valid/validation.pipe';
 @Controller('appointment')
 @ApiTags('appointment')
 export class AppointmentController {
@@ -31,13 +31,13 @@ export class AppointmentController {
         return appts;
     }
 
-    @UsePipes(new ValidationPipe())
+    
     @Post('createApp')
     @ApiResponse({
         status: 201,
         description: 'Create Appointment'
     })
-    async createOneApp(@Body() input: Partial<CreateAppointmentDto>) {
+    async createOneApp(@Body(new ValidationPipe) input: CreateAppointmentDto) {
         //console.log(typeof input.validate);   
         // console.log( typeof input.validate());
          

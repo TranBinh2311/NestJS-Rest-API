@@ -1,8 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UsePipes } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ValidationPipe } from 'src/shared/validation.pip';
+import { User } from './entities/user.entity';
+import { Validate } from 'class-validator';
 
 @Controller('users')
 @ApiTags('users')
@@ -10,11 +13,12 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
   @Post()
+//@UsePipes(new ValidationPipe())
   @ApiResponse({
     status: 201,
     description: 'Create User'
   })
-  async create(@Body() newUsers: CreateUserDto) {
+  async create( @Body(new ValidationPipe()) newUsers: CreateUserDto) {
     return this.usersService.create(newUsers);
   }
 
