@@ -19,7 +19,7 @@ export class UsersService {
     )
     if (result) {
       // Wrong data, User is already exist
-      this.myLogger.warn('User has already exists');
+      //this.myLogger.warn('User has already exists');
       throw new HttpException('User is already exist', HttpStatus.BAD_REQUEST);
     }
 
@@ -30,7 +30,7 @@ export class UsersService {
   }
   /*Find All User */
   async findAll(): Promise<User[]> {
-    this.myLogger.log(`Find All User`);
+    //this.myLogger.log(`Find All User`);
     const result = await this.prisma.user.findMany();
     return result;
   }
@@ -39,7 +39,7 @@ export class UsersService {
     const result = await this.prisma.user.findUnique({ where: { id } })
 
     if (!result) {
-      this.myLogger.warn('User has not already exists');
+      //this.myLogger.warn('User has not already exists');
       throw new NotFoundException();
     }
     return result;
@@ -50,7 +50,7 @@ export class UsersService {
     const result = await this.prisma.user.findUnique({ where: { id } })
 
     if (!result) {
-      this.myLogger.warn('User has not already exists');
+      //this.myLogger.warn('User has not already exists');
       // user not found
       throw new NotFoundException();
     }

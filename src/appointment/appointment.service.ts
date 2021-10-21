@@ -60,6 +60,17 @@ export class AppointmentService {
         timeZone
     }): Promise<Appointment> {
 
+        const user = await this.prisma.user.findUnique({
+            where:{
+                id: toUser
+            }
+        })
+        if(!user)
+        {
+            throw new NotFoundException();
+        }
+
+        
         return await this.prisma.appointment.create({
             data: {
                 startTime,

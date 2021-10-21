@@ -26,24 +26,6 @@ export class ValidationPipe extends checkValid implements PipeTransform {
         const today = new Date().valueOf();
         const startDate = Date.parse(value.startTime)
         const endDate = Date.parse(value.endTime)
-
-        // if (startDate > endDate) {
-        //     this.check(errors, "'End' cannot be earlier than 'Start'")
-        // }
-
-        // if (startDate < today) {
-        //     this.check(errors, "'Start' must be greater than 'Today'")
-        // }
-
-
-        // if (this.isValidTimeZone(value.timeZone) === true) {
-        //     this.check(errors, "'Timezone' must be a valid IANA time zone")
-        // }
-        // else {
-        //     const now = new Date().toLocaleString("en-US", { timeZone: value.timeZone });
-        //     console.log(now);  
-        // }
-        //console.log(errors);
         
         if (errors.length > 0) {
             throw new HttpException(

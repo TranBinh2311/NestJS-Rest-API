@@ -30,39 +30,10 @@ export class CreateAppointmentDto extends checkValid  {
 
     @ApiProperty({
         description: 'IANA time zone string ',
-        example: 'VietNam/HaNoi'
+        example: 'Europe/London'
     })
     @IsString()
     @IsNotEmpty()
     readonly timeZone: string;
-
-    validate(): string[] {
-
-        const errors = [];
-        const today = new Date().valueOf();
-        const startDate = Date.parse(this.startTime)
-        const endDate = Date.parse(this.endTime)
-
-
-        if (startDate > endDate) {
-            errors.push("'End' cannot be earlier than 'Start'")
-        }
-
-        if (startDate < today) {
-            errors.push("'Start' must be greater than 'Today'")
-        }
-
-
-        if (this.isValidTimeZone(this.timeZone) === true) {
-            errors.push("'Timezone' must be a valid IANA time zone")
-        }
-        else {
-            const now = new Date().toLocaleString("en-US", { timeZone: this.timeZone });
-            console.log(now);  
-        }
-
-        return errors;
-    }
-
 
 }

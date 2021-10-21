@@ -5,7 +5,9 @@ import { AppointmentService } from './appointment.service';
 import { getApptsDTO } from './dto/appointment.dto';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
-import { ValidationPipe } from './valid/validation.pipe';
+import { checkValid } from './valid/appointment.entity';
+import { ValidationPipe } from 'src/shared/validation.pip';
+import { PrismaService } from 'src/prisma/prisma.service';
 @Controller('appointment')
 @ApiTags('appointment')
 export class AppointmentController {
@@ -38,13 +40,8 @@ export class AppointmentController {
         description: 'Create Appointment'
     })
     async createOneApp(@Body(new ValidationPipe) input: CreateAppointmentDto) {
-        //console.log(typeof input.validate);   
-        // console.log( typeof input.validate());
-         
-        // const errors = input.validate();
-        // if (errors.length > 0) {
-        //     throw new BadRequestException(errors)
-        // }
+
+        checkValid.validate(input);
 
         const {
             toUser,
