@@ -18,6 +18,9 @@ const users_service_1 = require("./users.service");
 const create_user_dto_1 = require("./dto/create-user.dto");
 const update_user_dto_1 = require("./dto/update-user.dto");
 const swagger_1 = require("@nestjs/swagger");
+const validation_pip_1 = require("../shared/validation.pip");
+const passport_1 = require("@nestjs/passport");
+const jwt_strategy_1 = require("../auth/jwt.strategy");
 let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
@@ -44,13 +47,15 @@ __decorate([
         status: 201,
         description: 'Create User'
     }),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Body)(new validation_pip_1.ValidationPipe())),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)()),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiResponse)({
         status: 200,
         description: 'Get All User'

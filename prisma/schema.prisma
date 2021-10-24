@@ -29,7 +29,7 @@ model Appointment {
   endTime   DateTime //@updatedAt
   userId    Int
   toUser    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  timeZone  String  
+  timeZone  String
   createAt  DateTime @default(now())
   updateAt  DateTime @updatedAt
 }

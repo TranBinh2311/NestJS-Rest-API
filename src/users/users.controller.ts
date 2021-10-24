@@ -1,11 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UsePipes } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UsePipes, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ValidationPipe } from 'src/shared/validation.pip';
 import { User } from './entities/user.entity';
 import { Validate } from 'class-validator';
+import { AuthGuard } from '@nestjs/passport';
+//import { JwtAuthGaurd } from 'src/auth/jwt-auth.gaurd';
+import { localStrategy } from 'src/auth/jwt.strategy';
 
 @Controller('users')
 @ApiTags('users')
@@ -23,6 +26,8 @@ export class UsersController {
   }
 
   @Get()
+  @UseGuards(AuthGuard())
+  @ApiBearerAuth()
   @ApiResponse({
     status: 200,
     description: 'Get All User'

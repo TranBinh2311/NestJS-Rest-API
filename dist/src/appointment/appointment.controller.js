@@ -19,6 +19,9 @@ const appointment_service_1 = require("./appointment.service");
 const appointment_dto_1 = require("./dto/appointment.dto");
 const create_appointment_dto_1 = require("./dto/create-appointment.dto");
 const update_appointment_dto_1 = require("./dto/update-appointment.dto");
+const appointment_entity_1 = require("./valid/appointment.entity");
+const validation_pip_1 = require("../shared/validation.pip");
+const prisma_service_1 = require("../prisma/prisma.service");
 let AppointmentController = class AppointmentController {
     constructor(appointmentService) {
         this.appointmentService = appointmentService;
@@ -32,6 +35,7 @@ let AppointmentController = class AppointmentController {
         return appts;
     }
     async createOneApp(input) {
+        appointment_entity_1.checkValid.validate(input);
         const { toUser, startTime, endTime, timeZone } = input;
         const newAppt = await this.appointmentService.createApp({
             toUser,
@@ -78,7 +82,7 @@ __decorate([
         status: 201,
         description: 'Create Appointment'
     }),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Body)(new validation_pip_1.ValidationPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_appointment_dto_1.CreateAppointmentDto]),
     __metadata("design:returntype", Promise)

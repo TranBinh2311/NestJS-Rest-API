@@ -13,17 +13,15 @@ exports.AppointmentService = void 0;
 const common_1 = require("@nestjs/common");
 const runtime_1 = require("@prisma/client/runtime");
 const prisma_service_1 = require("../prisma/prisma.service");
-const exception_1 = require("../exceptions/exception");
 const prismaError_1 = require("../utils/prismaError");
 let AppointmentService = class AppointmentService {
     constructor(prisma) {
         this.prisma = prisma;
     }
     async appointment(id) {
-        const app = await this.prisma.appointment.findUnique({
+        return await this.prisma.appointment.findUnique({
             where: { id }
         });
-        return app;
     }
     async appointmentsByUser(filter) {
         const today = new Date();
@@ -49,7 +47,15 @@ let AppointmentService = class AppointmentService {
         return appointments;
     }
     async createApp({ toUser, startTime, endTime, timeZone }) {
-        const newApp = await this.prisma.appointment.create({
+        const user = await this.prisma.user.findUnique({
+            where: {
+                id: toUser
+            }
+        });
+        if (!user) {
+            throw new common_1.NotFoundException();
+        }
+        return await this.prisma.appointment.create({
             data: {
                 startTime,
                 endTime,
@@ -61,7 +67,6 @@ let AppointmentService = class AppointmentService {
                 },
             }
         });
-        return newApp;
     }
     async updateApp(id, params) {
         const { startTime, endTime } = params;
@@ -79,7 +84,7 @@ let AppointmentService = class AppointmentService {
         catch (error) {
             if (error instanceof runtime_1.PrismaClientKnownRequestError &&
                 error.code === prismaError_1.PrismaError.RecordDoesNotExist) {
-                throw new exception_1.ApptException(id);
+                throw new common_1.NotFoundException();
             }
             throw error;
         }

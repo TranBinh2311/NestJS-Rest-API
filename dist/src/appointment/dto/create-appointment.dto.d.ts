@@ -4,5 +4,4 @@ export declare class CreateAppointmentDto extends checkValid {
     readonly startTime: string;
     readonly endTime: string;
     readonly timeZone: string;
-    validate(): string[];
 }

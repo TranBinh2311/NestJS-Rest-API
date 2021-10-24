@@ -10,12 +10,21 @@ exports.AppointmentModule = void 0;
 const common_1 = require("@nestjs/common");
 const appointment_service_1 = require("./appointment.service");
 const appointment_controller_1 = require("./appointment.controller");
+const core_1 = require("@nestjs/core");
+const http_error_filter_1 = require("../shared/http-error.filter");
+const logging_interceptor_1 = require("../shared/logging.interceptor");
 let AppointmentModule = class AppointmentModule {
 };
 AppointmentModule = __decorate([
     (0, common_1.Module)({
         controllers: [appointment_controller_1.AppointmentController],
-        providers: [appointment_service_1.AppointmentService]
+        providers: [appointment_service_1.AppointmentService, {
+                provide: core_1.APP_FILTER,
+                useClass: http_error_filter_1.HttpErrorFilter
+            }, {
+                provide: core_1.APP_INTERCEPTOR,
+                useClass: logging_interceptor_1.LoggingInterceptor
+            }]
     })
 ], AppointmentModule);
 exports.AppointmentModule = AppointmentModule;

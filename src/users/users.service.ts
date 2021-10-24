@@ -5,6 +5,10 @@ import { LoggerService } from 'src/logger/logger.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { LoginUserDto } from './dto/login.dto';
+import { UserDto } from './dto/user.dto';
+import { NotFoundError } from 'rxjs';
+import { toUserDto } from 'src/shared/mapped';
 
 @Injectable()
 export class UsersService {
@@ -75,4 +79,22 @@ export class UsersService {
     return result;
   }
 
+  async findByLogin(input: LoginUserDto): Promise<UserDto> {
+    const user = await this.prisma.user.findUnique({
+      where: { email: input.email }
+    });
+
+    if (!user) {
+      throw new NotFoundException(`${input.email} is not exist`)
+    }
+    return toUserDto(user)
+  }
+
 }
+
+
+    //  const areEqual = await comparePasswords(user.password, password)
+
+    //   if (!areEqual) {
+    //     throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);    
+    //    }

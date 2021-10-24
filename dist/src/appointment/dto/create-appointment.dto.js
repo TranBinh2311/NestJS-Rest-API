@@ -14,25 +14,6 @@ const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
 const appointment_entity_1 = require("../valid/appointment.entity");
 class CreateAppointmentDto extends appointment_entity_1.checkValid {
-    validate() {
-        const loi = [];
-        const today = new Date().valueOf();
-        const startDate = Date.parse(this.startTime);
-        const endDate = Date.parse(this.endTime);
-        if (startDate > endDate) {
-            loi.push("'End' cannot be earlier than 'Start'");
-        }
-        if (startDate < today) {
-            loi.push("'Start' must be greater than 'Today'");
-        }
-        if (this.isValidTimeZone(this.timeZone) === true) {
-            loi.push("'Timezone' must be a valid IANA time zone");
-        }
-        else {
-            const now = new Date().toLocaleString("en-US", { timeZone: this.timeZone });
-        }
-        return loi;
-    }
 }
 __decorate([
     (0, swagger_1.ApiProperty)(),
@@ -60,7 +41,7 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiProperty)({
         description: 'IANA time zone string ',
-        example: 'VietNam/HaNoi'
+        example: 'Europe/London'
     }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),

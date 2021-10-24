@@ -11,10 +11,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersService = void 0;
 const common_1 = require("@nestjs/common");
+const logger_service_1 = require("../logger/logger.service");
 const prisma_service_1 = require("../prisma/prisma.service");
+const mapped_1 = require("../shared/mapped");
 let UsersService = class UsersService {
-    constructor(prisma) {
+    constructor(prisma, myLogger) {
         this.prisma = prisma;
+        this.myLogger = myLogger;
     }
     async create(newUsers) {
         const result = await this.prisma.user.findUnique({
@@ -51,15 +54,25 @@ let UsersService = class UsersService {
     async remove(id) {
         const result = await this.prisma.user.findUnique({ where: { id } });
         if (!result) {
+            this.myLogger.warn('User has not already exists');
             throw new common_1.NotFoundException();
         }
         await this.prisma.user.delete({ where: { id } });
         return result;
     }
+    async findByLogin(input) {
+        const user = await this.prisma.user.findUnique({
+            where: { email: input.email }
+        });
+        if (!user) {
+            throw new common_1.NotFoundException(`${input.email} is not exist`);
+        }
+        return (0, mapped_1.toUserDto)(user);
+    }
 };
 UsersService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService, logger_service_1.LoggerService])
 ], UsersService);
 exports.UsersService = UsersService;
 //# sourceMappingURL=users.service.js.map
