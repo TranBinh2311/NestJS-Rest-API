@@ -12,40 +12,34 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @ApiTags('appointment')
 export class AppointmentController {
     constructor(private readonly appointmentService: AppointmentService) { }
-/*------------------------------------------GET APPOIMENT BY ID----------------------------------------------------------------------*/
+    /*------------------------------------------GET APPOIMENT BY ID----------------------------------------------------------------------*/
     @Get('getById/:id')
     @ApiResponse({
         status: 200,
         description: 'Get Appointment By Id'
     })
     async findOneApp(@Param('id', ParseIntPipe) id: number) {
-        const appt = await this.appointmentService.appointment(id);
-        return appt;
+        return await this.appointmentService.appointment(id);
     }
-/*------------------------------------------GET LIST APPOINTMENT BY USER AND {START DATE, END DATE}----------------------------------------------------------------------*/
+    /*------------------------------------------GET LIST APPOINTMENT BY USER AND {START DATE, END DATE}----------------------------------------------------------------------*/
     @Post('listAppByUser')
     @ApiResponse({
         status: 200,
         description: 'get list App Follow User'
     })
     async findApptsByUser(@Body(new ValidationPipe) filter: getApptsDTO) {
-
         //checkValid.validate(filter);
-
-        const appts = await this.appointmentService.appointmentsByUser(filter);
-        return appts;
+        return await this.appointmentService.appointmentsByUser(filter);
     }
 
-/*------------------------------------------CREATE APPOIMENT FOR USER----------------------------------------------------------------------*/
+    /*------------------------------------------CREATE APPOIMENT FOR USER----------------------------------------------------------------------*/
     @Post('createApp')
-    @ApiResponse({ 
+    @ApiResponse({
         status: 201,
         description: 'Create Appointment'
     })
     async createOneApp(@Body(new ValidationPipe) input: CreateAppointmentDto) { // check invalide input
-
         checkValid.validate(input); // check starttime and endtime (ex: starttime must be smaller than endtime ) 
-
         const {
             toUser,
             startTime,
@@ -53,32 +47,31 @@ export class AppointmentController {
             timeZone
         } = input  // destructuring
 
-        const newAppt = await this.appointmentService.createApp({
+        return await this.appointmentService.createApp({
             toUser,
             startTime,
             endTime,
             timeZone
         });
-        return newAppt;
     }
-/*------------------------------------------UPDATE APPOINTMENT----------------------------------------------------------------------*/
+
+    /*------------------------------------------UPDATE APPOINTMENT----------------------------------------------------------------------*/
     @Patch('updateAppt/:id')
     @ApiResponse({
         status: 200,
         description: 'Update Appointment'
     })
     async updateOneAppt(@Param('id', ParseIntPipe) id: number, @Body(new ValidationPipe) input: UpdateAppointmentDto) {
-        const apptUpdated = await this.appointmentService.updateApp(id, input);
-        return apptUpdated;
+        return await this.appointmentService.updateApp(id, input);
     }
-/*------------------------------------------DELETE APPOINMENT----------------------------------------------------------------------*/
+
+    /*------------------------------------------DELETE APPOINMENT----------------------------------------------------------------------*/
     @Delete('deleteUser/:id')
     @ApiResponse({
         status: 204,
         description: 'Delete Appointment'
     })
     async deleteOneAppt(@Param('id', ParseIntPipe) id: number) {
-        const apptDeleted = await this.appointmentService.deleteApp(id);
-        return apptDeleted;
+        return await this.appointmentService.deleteApp(id);
     }
 }

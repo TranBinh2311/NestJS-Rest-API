@@ -33,12 +33,11 @@ export class UsersService {
   /*------------------------------------------GET ALL USER WITHOUT APPOINMENT ----------------------------------------------------------------------*/
   async findAll(): Promise<User[]> {
     //this.myLogger.log(`Find All User`);
-    const result = await this.prisma.user.findMany({
+    return await this.prisma.user.findMany({
       include: {
         appointments: false,
       }
     });
-    return result;
   }
   /*------------------------------------------GET USER BY ID----------------------------------------------------------------------*/
   async findOne(id: number) {

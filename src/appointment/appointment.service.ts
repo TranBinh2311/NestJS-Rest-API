@@ -18,10 +18,10 @@ export class AppointmentService {
     // Get a single appointment by email user
     async appointment(id: number): Promise<Appointment> {
         // get in4 appoint by user.id
-        const result =  await this.prisma.appointment.findUnique({
+        const result = await this.prisma.appointment.findUnique({
             where: { id }
         });
-        if(!result) throw new NotFoundException()
+        if (!result) throw new NotFoundException()
         return result;
     }
     //get list appointment by user
@@ -30,7 +30,7 @@ export class AppointmentService {
         const startDate = new Date(Date.parse(filter.startTime));
         const endDate = new Date(Date.parse(filter.endTime));
 
-        const appointments = await this.prisma.appointment.findMany({
+        return await this.prisma.appointment.findMany({
             where: {
                 AND: [
                     { userId: filter.toUser },
@@ -47,7 +47,6 @@ export class AppointmentService {
                 ],
             }
         });
-        return appointments;
     }
     // Create an appointment
     async createApp({
@@ -58,12 +57,11 @@ export class AppointmentService {
     }): Promise<Appointment> {
 
         const user = await this.prisma.user.findUnique({
-            where:{
+            where: {
                 id: toUser
             }
         })
-        if(!user)
-        {
+        if (!user) {
             throw new NotFoundException();
         }
 
@@ -86,21 +84,6 @@ export class AppointmentService {
     async updateApp(id: number, params: UpdateAppointmentDto): Promise<Appointment> {
         const { startTime, endTime } = params;
         const today = new Date();
-
-        // if (Date.parse(startTime) < today.valueOf()) {
-        //     throw new HttpException(
-        //         'Start date must be greater than today',
-        //         HttpStatus.BAD_REQUEST,
-        //     );
-        // }
-
-        // if (Date.parse(startTime) > Date.parse(endTime)) {
-        //     throw new HttpException(
-        //         'End date must be greater than start date',
-        //         HttpStatus.BAD_REQUEST,
-        //     );
-        // }
-
         try {
             const updateAppt = await this.prisma.appointment.update({
                 where: { id },
@@ -112,8 +95,8 @@ export class AppointmentService {
                     toUser: true, // Return all fields
                 },
             });
-
             return updateAppt;
+
         } catch (error) {
             if (
                 error instanceof PrismaClientKnownRequestError &&
