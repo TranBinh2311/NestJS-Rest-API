@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, BadRequestException, Query, UsePipes} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, BadRequestException, Query, UsePipes } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Validate } from 'class-validator';
 import { AppointmentService } from './appointment.service';
@@ -12,7 +12,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @ApiTags('appointment')
 export class AppointmentController {
     constructor(private readonly appointmentService: AppointmentService) { }
-
+/*------------------------------------------GET APPOIMENT BY ID----------------------------------------------------------------------*/
     @Get('getById/:id')
     @ApiResponse({
         status: 200,
@@ -22,33 +22,36 @@ export class AppointmentController {
         const appt = await this.appointmentService.appointment(id);
         return appt;
     }
-
+/*------------------------------------------GET LIST APPOINTMENT BY USER AND {START DATE, END DATE}----------------------------------------------------------------------*/
     @Post('listAppByUser')
     @ApiResponse({
         status: 200,
         description: 'get list App Follow User'
     })
-    async findApptsByUser(@Body() filter: getApptsDTO) {
+    async findApptsByUser(@Body(new ValidationPipe) filter: getApptsDTO) {
+
+        //checkValid.validate(filter);
+
         const appts = await this.appointmentService.appointmentsByUser(filter);
         return appts;
     }
 
-    
+/*------------------------------------------CREATE APPOIMENT FOR USER----------------------------------------------------------------------*/
     @Post('createApp')
-    @ApiResponse({
+    @ApiResponse({ 
         status: 201,
         description: 'Create Appointment'
     })
-    async createOneApp(@Body(new ValidationPipe) input: CreateAppointmentDto) {
+    async createOneApp(@Body(new ValidationPipe) input: CreateAppointmentDto) { // check invalide input
 
-        checkValid.validate(input);
+        checkValid.validate(input); // check starttime and endtime (ex: starttime must be smaller than endtime ) 
 
         const {
             toUser,
             startTime,
             endTime,
             timeZone
-        } = input
+        } = input  // destructuring
 
         const newAppt = await this.appointmentService.createApp({
             toUser,
@@ -58,17 +61,17 @@ export class AppointmentController {
         });
         return newAppt;
     }
-
+/*------------------------------------------UPDATE APPOINTMENT----------------------------------------------------------------------*/
     @Patch('updateAppt/:id')
     @ApiResponse({
         status: 200,
         description: 'Update Appointment'
     })
-    async updateOneAppt(@Param('id', ParseIntPipe) id: number, @Body() input: UpdateAppointmentDto) {
+    async updateOneAppt(@Param('id', ParseIntPipe) id: number, @Body(new ValidationPipe) input: UpdateAppointmentDto) {
         const apptUpdated = await this.appointmentService.updateApp(id, input);
         return apptUpdated;
     }
-
+/*------------------------------------------DELETE APPOINMENT----------------------------------------------------------------------*/
     @Delete('deleteUser/:id')
     @ApiResponse({
         status: 204,

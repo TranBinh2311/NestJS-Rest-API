@@ -71,7 +71,7 @@ __decorate([
         status: 200,
         description: 'get list App Follow User'
     }),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Body)(new validation_pip_1.ValidationPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [appointment_dto_1.getApptsDTO]),
     __metadata("design:returntype", Promise)
@@ -94,7 +94,7 @@ __decorate([
         description: 'Update Appointment'
     }),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
-    __param(1, (0, common_1.Body)()),
+    __param(1, (0, common_1.Body)(new validation_pip_1.ValidationPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number, update_appointment_dto_1.UpdateAppointmentDto]),
     __metadata("design:returntype", Promise)

@@ -21,7 +21,7 @@ export class checkValid{
         }
     }
 
-    static validate(value: CreateAppointmentDto) {
+    static validate(value: any) {
 
         const errors = [];
         const today = new Date().valueOf();

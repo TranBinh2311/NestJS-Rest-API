@@ -31,11 +31,20 @@ let UsersService = class UsersService {
         });
     }
     async findAll() {
-        const result = await this.prisma.user.findMany();
+        const result = await this.prisma.user.findMany({
+            include: {
+                appointments: false,
+            }
+        });
         return result;
     }
     async findOne(id) {
-        const result = await this.prisma.user.findUnique({ where: { id } });
+        const result = await this.prisma.user.findUnique({
+            where: { id },
+            include: {
+                appointments: true
+            }
+        });
         if (!result) {
             throw new common_1.NotFoundException();
         }

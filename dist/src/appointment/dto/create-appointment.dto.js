@@ -22,7 +22,7 @@ __decorate([
 ], CreateAppointmentDto.prototype, "toUser", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
-        description: 'Input must have date format ',
+        description: 'Input must be had date format ',
         example: '1999-11-23T00:00:00.000Z'
     }),
     (0, class_validator_1.IsString)(),
@@ -31,7 +31,7 @@ __decorate([
 ], CreateAppointmentDto.prototype, "startTime", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
-        description: 'Input must have date format ',
+        description: 'Input must be had date format ',
         example: '1999-11-23T00:00:00.000Z'
     }),
     (0, class_validator_1.IsString)(),

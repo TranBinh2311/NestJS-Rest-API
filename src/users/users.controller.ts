@@ -13,7 +13,6 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
   @Post()
-  //@UsePipes(new ValidationPipe())
   @ApiResponse({
     status: 201,
     description: 'Create User'
@@ -22,6 +21,7 @@ export class UsersController {
     return this.usersService.create(newUsers);
   }
 
+  /*---------------------------------------------GET ALL USERS-------------------------------------------------------------------*/
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Get()
@@ -32,9 +32,7 @@ export class UsersController {
   async findAll() {
     return this.usersService.findAll();
   }
-
-
-
+  /*---------------------------------------------GET USER BY ID-------------------------------------------------------------------*/
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Get(':id')
@@ -45,16 +43,17 @@ export class UsersController {
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.findOne(id);
   }
-
+  /*------------------------------------------------UPDATE USER----------------------------------------------------------------*/
   @Patch('updateUser/:id')
   @ApiResponse({
     status: 200,
     description: 'Update User'
   })
-  async update(@Param('id', ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto) {
+  async update(@Param('id', ParseIntPipe) id: number, @Body(new ValidationPipe) updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
   }
 
+  /*-------------------------------------------------REMOVE USER---------------------------------------------------------------*/
   @ApiResponse({
     status: 204,
     description: 'Remove/Detele User'
@@ -63,4 +62,5 @@ export class UsersController {
   async remove(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.remove(id);
   }
+
 }

@@ -5,15 +5,12 @@ import { checkValid } from '../valid/appointment.entity'
 
 export class CreateAppointmentDto extends checkValid  {
 
-
-    
-
     @ApiProperty()
     @IsNotEmpty()
     readonly toUser: number;
 
     @ApiProperty({
-        description: 'Input must have date format ',
+        description: 'Input must be had date format ',
         example: '1999-11-23T00:00:00.000Z'
     })
     @IsString()
@@ -21,7 +18,7 @@ export class CreateAppointmentDto extends checkValid  {
     readonly startTime: string;
 
     @ApiProperty({
-        description: 'Input must have date format ',
+        description: 'Input must be had date format ',
         example: '1999-11-23T00:00:00.000Z'
     })
     @IsString()

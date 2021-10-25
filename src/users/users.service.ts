@@ -14,7 +14,7 @@ import { toUserDto } from 'src/shared/mapped';
 export class UsersService {
 
   constructor(private prisma: PrismaService, private myLogger: LoggerService) { }
-  /*Create Account*/
+  /*------------------------------------------CREATE USERS----------------------------------------------------------------------*/
   async create(newUsers: CreateUserDto): Promise<User> {
     const result = await this.prisma.user.findUnique(
       {
@@ -22,50 +22,54 @@ export class UsersService {
       }
     )
     if (result) {
-      // Wrong data, User is already exist
-      //this.myLogger.warn('User has already exists');
       throw new HttpException('User is already exist', HttpStatus.BAD_REQUEST);
     }
 
     return await this.prisma.user.create({
       data: newUsers
     })
-
   }
-  /*Find All User */
+
+  /*------------------------------------------GET ALL USER WITHOUT APPOINMENT ----------------------------------------------------------------------*/
   async findAll(): Promise<User[]> {
     //this.myLogger.log(`Find All User`);
-    const result = await this.prisma.user.findMany();
+    const result = await this.prisma.user.findMany({
+      include: {
+        appointments: false,
+      }
+    });
     return result;
   }
-  /*Find by id */
+  /*------------------------------------------GET USER BY ID----------------------------------------------------------------------*/
   async findOne(id: number) {
-    const result = await this.prisma.user.findUnique({ where: { id } })
-
+    const result = await this.prisma.user.findUnique({
+      where: { id },
+      include: {
+        appointments: true
+      }
+    })
     if (!result) {
       //this.myLogger.warn('User has not already exists');
       throw new NotFoundException();
     }
     return result;
   }
-  /*Delete User By Id*/
+  /*------------------------------------------UPDATE USER----------------------------------------------------------------------*/
   async update(id: number, updateUserDto: UpdateUserDto) {
 
     const result = await this.prisma.user.findUnique({ where: { id } })
-
     if (!result) {
       //this.myLogger.warn('User has not already exists');
       // user not found
       throw new NotFoundException();
     }
-
     return await this.prisma.user.update({
       where: { id },
       data: updateUserDto,
     })
 
   }
-  /*Remove Account */
+  /*------------------------------------------REMOVE USER----------------------------------------------------------------------*/
   async remove(id: number): Promise<User> {
 
     const result = await this.prisma.user.findUnique({ where: { id } })
@@ -74,16 +78,14 @@ export class UsersService {
       this.myLogger.warn('User has not already exists');
       throw new NotFoundException();
     }
-
     await this.prisma.user.delete({ where: { id } })
     return result;
   }
-
+  /*------------------------------------------FIND BY LOGIN----------------------------------------------------------------------*/
   async findByLogin(input: LoginUserDto): Promise<UserDto> {
     const user = await this.prisma.user.findUnique({
       where: { email: input.email }
     });
-
     if (!user) {
       throw new NotFoundException(`${input.email} is not exist`)
     }

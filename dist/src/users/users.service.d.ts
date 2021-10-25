@@ -11,7 +11,9 @@ export declare class UsersService {
     constructor(prisma: PrismaService, myLogger: LoggerService);
     create(newUsers: CreateUserDto): Promise<User>;
     findAll(): Promise<User[]>;
-    findOne(id: number): Promise<User>;
+    findOne(id: number): Promise<User & {
+        appointments: import(".prisma/client").Appointment[];
+    }>;
     update(id: number, updateUserDto: UpdateUserDto): Promise<User>;
     remove(id: number): Promise<User>;
     findByLogin(input: LoginUserDto): Promise<UserDto>;

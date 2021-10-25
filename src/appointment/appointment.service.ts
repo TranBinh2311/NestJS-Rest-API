@@ -17,16 +17,13 @@ export class AppointmentService {
 
     // Get a single appointment by email user
     async appointment(id: number): Promise<Appointment> {
-
         // get in4 appoint by user.id
-        return await this.prisma.appointment.findUnique({
+        const result =  await this.prisma.appointment.findUnique({
             where: { id }
         });
+        if(!result) throw new NotFoundException()
+        return result;
     }
-
-    // Get multiple posts
-
-
     //get list appointment by user
     async appointmentsByUser(filter: getApptsDTO): Promise<Appointment[]> {
         const today = new Date();
@@ -70,7 +67,6 @@ export class AppointmentService {
             throw new NotFoundException();
         }
 
-        
         return await this.prisma.appointment.create({
             data: {
                 startTime,

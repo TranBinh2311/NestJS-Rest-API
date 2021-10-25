@@ -19,9 +19,12 @@ let AppointmentService = class AppointmentService {
         this.prisma = prisma;
     }
     async appointment(id) {
-        return await this.prisma.appointment.findUnique({
+        const result = await this.prisma.appointment.findUnique({
             where: { id }
         });
+        if (!result)
+            throw new common_1.NotFoundException();
+        return result;
     }
     async appointmentsByUser(filter) {
         const today = new Date();
