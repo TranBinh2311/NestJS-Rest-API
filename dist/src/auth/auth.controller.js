@@ -14,11 +14,11 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = void 0;
 const common_1 = require("@nestjs/common");
-const passport_1 = require("@nestjs/passport");
 const swagger_1 = require("@nestjs/swagger");
 const validation_pip_1 = require("../shared/validation.pip");
 const auth_service_1 = require("./auth.service");
 const login_dto_1 = require("./dto/login.dto");
+const local_auth_gaurd_1 = require("./guards/local-auth.gaurd");
 let AuthController = class AuthController {
     constructor(authService) {
         this.authService = authService;
@@ -39,7 +39,7 @@ __decorate([
 ], AuthController.prototype, "login", null);
 __decorate([
     (0, common_1.Get)(),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)()),
+    (0, common_1.UseGuards)(local_auth_gaurd_1.LocalAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiResponse)({
         status: 200,

@@ -19,8 +19,7 @@ const create_user_dto_1 = require("./dto/create-user.dto");
 const update_user_dto_1 = require("./dto/update-user.dto");
 const swagger_1 = require("@nestjs/swagger");
 const validation_pip_1 = require("../shared/validation.pip");
-const passport_1 = require("@nestjs/passport");
-const jwt_strategy_1 = require("../auth/jwt.strategy");
+const jwt_auth_gaurd_1 = require("../auth/guards/jwt-auth.gaurd");
 let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
@@ -53,9 +52,9 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "create", null);
 __decorate([
-    (0, common_1.Get)(),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)()),
+    (0, common_1.UseGuards)(jwt_auth_gaurd_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.Get)(),
     (0, swagger_1.ApiResponse)({
         status: 200,
         description: 'Get All User'
@@ -65,6 +64,8 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "findAll", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_gaurd_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.Get)(':id'),
     (0, swagger_1.ApiResponse)({
         status: 200,

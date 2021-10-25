@@ -10,6 +10,7 @@ async function bootstrap() {
         .setTitle(' Appoinment API')
         .setDescription('Appoinment Api')
         .setVersion('5.1.0')
+        .addBearerAuth()
         .build();
     const document = swagger_1.SwaggerModule.createDocument(app, options);
     swagger_1.SwaggerModule.setup('api', app, document);

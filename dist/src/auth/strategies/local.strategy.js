@@ -12,21 +12,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LocalStrategy = void 0;
 const common_1 = require("@nestjs/common");
 const passport_1 = require("@nestjs/passport");
-const passport_jwt_1 = require("passport-jwt");
-const auth_service_1 = require("./auth.service");
-const jwt_auth_gaurd_1 = require("./jwt-auth.gaurd");
-let LocalStrategy = class LocalStrategy extends (0, passport_1.PassportStrategy)(passport_jwt_1.Strategy) {
+const passport_local_1 = require("passport-local");
+const auth_service_1 = require("../auth.service");
+let LocalStrategy = class LocalStrategy extends (0, passport_1.PassportStrategy)(passport_local_1.Strategy) {
     constructor(authService) {
-        super({
-            jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
-            secretOrKey: jwt_auth_gaurd_1.jwtConstants.secret,
-        });
+        super();
         this.authService = authService;
     }
     async validate(email) {
         const user = await this.authService.validateUser(email);
         if (!user) {
-            throw new common_1.HttpException('Invalid token', common_1.HttpStatus.UNAUTHORIZED);
+            throw new common_1.UnauthorizedException();
         }
         return user;
     }
@@ -36,4 +32,4 @@ LocalStrategy = __decorate([
     __metadata("design:paramtypes", [auth_service_1.AuthService])
 ], LocalStrategy);
 exports.LocalStrategy = LocalStrategy;
-//# sourceMappingURL=jwt.strategy.js.map
+//# sourceMappingURL=local.strategy.js.map

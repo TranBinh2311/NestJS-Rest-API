@@ -39,7 +39,7 @@ export class AuthService {
     //   }
        async getAll()
        {
-           return "Hello"
+           return "Hello";
        }    
 
       async login(loginUserDto: LogDto): Promise<Auth> {

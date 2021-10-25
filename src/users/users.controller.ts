@@ -4,11 +4,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ValidationPipe } from 'src/shared/validation.pip';
-import { User } from './entities/user.entity';
-import { Validate } from 'class-validator';
-import { AuthGuard } from '@nestjs/passport';
-//import { JwtAuthGaurd } from 'src/auth/jwt-auth.gaurd';
-import { localStrategy } from 'src/auth/jwt.strategy';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.gaurd';
+
 
 @Controller('users')
 @ApiTags('users')
@@ -16,18 +13,18 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
   @Post()
-//@UsePipes(new ValidationPipe())
+  //@UsePipes(new ValidationPipe())
   @ApiResponse({
     status: 201,
     description: 'Create User'
   })
-  async create( @Body(new ValidationPipe()) newUsers: CreateUserDto) {
+  async create(@Body(new ValidationPipe()) newUsers: CreateUserDto) {
     return this.usersService.create(newUsers);
   }
 
-  @Get()
-  @UseGuards(AuthGuard())
+  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
+  @Get()
   @ApiResponse({
     status: 200,
     description: 'Get All User'
@@ -36,6 +33,10 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
+
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Get(':id')
   @ApiResponse({
     status: 200,
@@ -60,6 +61,6 @@ export class UsersController {
   })
   @Delete('deteleUser/:id')
   async remove(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.remove(id); 
+    return this.usersService.remove(id);
   }
 }
