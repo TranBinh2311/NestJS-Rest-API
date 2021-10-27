@@ -1,0 +1,42 @@
+type Appointment {
+    id: ID!
+    user: User!
+    name: String!
+    start_date: String!
+    end_date: String!
+    createdAt: String!
+}
+
+input NewAppt {
+    user: ID!
+    name: String!
+    start_date: String!
+    end_date: String!
+}
+
+input UpdateAppt {
+    id: ID!
+    name: String
+    start_date: String
+    end_date: String
+}
+
+input FilterFindApptsByUser {
+    user: ID
+    id: ID
+    name: String
+    start_date: String
+    end_date: String
+}
+
+type Query {
+    appointments: [Appointment!]!
+    appointment(id: ID!): Appointment
+    appointmentsByUser(filter: FilterFindApptsByUser): [Appointment]
+}
+
+type Mutation {
+    createAppt(input: NewAppt): Appointment!
+    updateAppt(input: UpdateAppt): Appointment
+    deleteAppt(id: ID!): Appointment
+}
