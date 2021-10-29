@@ -48,6 +48,7 @@ __decorate([
         description: 'Input must have date format ',
         example: '1999-11-23T00:00:00.000Z'
     }),
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "birthdate", void 0);

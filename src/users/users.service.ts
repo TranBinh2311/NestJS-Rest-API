@@ -1,14 +1,12 @@
 import { User } from '.prisma/client';
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import e from 'express';
-import { LoggerService } from 'src/logger/logger.service';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { HttpException, HttpStatus, Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { LoggerService } from '../logger/logger.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { LoginUserDto } from './dto/login.dto';
 import { UserDto } from './dto/user.dto';
-import { NotFoundError } from 'rxjs';
-import { toUserDto } from 'src/shared/mapped';
+import { toUserDto } from '../shared/mapped';
 
 @Injectable()
 export class UsersService {
@@ -22,7 +20,7 @@ export class UsersService {
       }
     )
     if (result) {
-      throw new HttpException('User is already exist', HttpStatus.BAD_REQUEST);
+      throw new  BadRequestException('User is already exist');
     }
 
     return await this.prisma.user.create({
@@ -68,13 +66,14 @@ export class UsersService {
     })
 
   }
+
   /*------------------------------------------REMOVE USER----------------------------------------------------------------------*/
   async remove(id: number): Promise<User> {
 
-    const result = await this.prisma.user.findUnique({ where: { id } })
+    const result = await this.findOne(id);
     if (!result) {
       //user not found
-      this.myLogger.warn('User has not already exists');
+      //this.myLogger.warn('User has not already exists');
       throw new NotFoundException();
     }
     await this.prisma.user.delete({ where: { id } })

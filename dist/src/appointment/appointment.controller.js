@@ -27,31 +27,26 @@ let AppointmentController = class AppointmentController {
         this.appointmentService = appointmentService;
     }
     async findOneApp(id) {
-        const appt = await this.appointmentService.appointment(id);
-        return appt;
+        return await this.appointmentService.appointment(id);
     }
     async findApptsByUser(filter) {
-        const appts = await this.appointmentService.appointmentsByUser(filter);
-        return appts;
+        return await this.appointmentService.appointmentsByUser(filter);
     }
     async createOneApp(input) {
         appointment_entity_1.checkValid.validate(input);
         const { toUser, startTime, endTime, timeZone } = input;
-        const newAppt = await this.appointmentService.createApp({
+        return await this.appointmentService.createApp({
             toUser,
             startTime,
             endTime,
             timeZone
         });
-        return newAppt;
     }
     async updateOneAppt(id, input) {
-        const apptUpdated = await this.appointmentService.updateApp(id, input);
-        return apptUpdated;
+        return await this.appointmentService.updateApp(id, input);
     }
     async deleteOneAppt(id) {
-        const apptDeleted = await this.appointmentService.deleteApp(id);
-        return apptDeleted;
+        return await this.appointmentService.deleteApp(id);
     }
 };
 __decorate([
