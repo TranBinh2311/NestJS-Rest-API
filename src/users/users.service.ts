@@ -70,10 +70,8 @@ export class UsersService {
   /*------------------------------------------REMOVE USER----------------------------------------------------------------------*/
   async remove(id: number): Promise<User> {
 
-    const result = await this.findOne(id);
+    const result = await this.prisma.user.findUnique({where:{id}})
     if (!result) {
-      //user not found
-      //this.myLogger.warn('User has not already exists');
       throw new NotFoundException();
     }
     await this.prisma.user.delete({ where: { id } })
