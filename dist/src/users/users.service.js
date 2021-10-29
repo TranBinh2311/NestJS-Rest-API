@@ -31,12 +31,11 @@ let UsersService = class UsersService {
         });
     }
     async findAll() {
-        const result = await this.prisma.user.findMany({
+        return await this.prisma.user.findMany({
             include: {
                 appointments: false,
             }
         });
-        return result;
     }
     async findOne(id) {
         const result = await this.prisma.user.findUnique({
@@ -61,9 +60,8 @@ let UsersService = class UsersService {
         });
     }
     async remove(id) {
-        const result = await this.prisma.user.findUnique({ where: { id } });
+        const result = await this.findOne(id);
         if (!result) {
-            this.myLogger.warn('User has not already exists');
             throw new common_1.NotFoundException();
         }
         await this.prisma.user.delete({ where: { id } });

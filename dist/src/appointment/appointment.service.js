@@ -30,7 +30,7 @@ let AppointmentService = class AppointmentService {
         const today = new Date();
         const startDate = new Date(Date.parse(filter.startTime));
         const endDate = new Date(Date.parse(filter.endTime));
-        const appointments = await this.prisma.appointment.findMany({
+        return await this.prisma.appointment.findMany({
             where: {
                 AND: [
                     { userId: filter.toUser },
@@ -47,7 +47,6 @@ let AppointmentService = class AppointmentService {
                 ],
             }
         });
-        return appointments;
     }
     async createApp({ toUser, startTime, endTime, timeZone }) {
         const user = await this.prisma.user.findUnique({

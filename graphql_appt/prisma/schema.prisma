@@ -1,0 +1,41 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity", "interactiveTransactions", "dataProxy"]
+}
+
+model User {
+  id           Int           @id @default(autoincrement())
+  email        String        @unique
+  firstName    String
+  lastName     String
+  birthdate    DateTime? //@updatedAt
+  role         UserRole      @default(DOCTOR)
+  createdAt    DateTime      @default(now())
+  updateAt     DateTime      @updatedAt
+  appointments Appointment[]
+}
+
+model Appointment {
+  id        Int      @id @default(autoincrement())
+  startTime DateTime //@updatedAt
+  endTime   DateTime //@updatedAt
+  userId    Int
+  toUser    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  timeZone  String
+  createAt  DateTime @default(now())
+  updateAt  DateTime @updatedAt
+}
+
+enum UserRole {
+  DOCTOR
+  THERAPY
+  CARE_MANAGER
+}
