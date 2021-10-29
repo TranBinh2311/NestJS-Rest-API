@@ -77,8 +77,9 @@ describe('UserController', () => {
         const returnSpy = jest.spyOn(prismaSevice.user, 'create')
             .mockImplementation((): any => {
                 id: Date.now(),
-                    example
+                example
             })
+
         try {
             await usersController.create(example);
         }
