@@ -1,13 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Appointment } from '@prisma/client';
 import { createApptDTO } from './dto/createAppt.dto';
 import { updateApptDTO } from './dto/updateAppt.dto';
 import { getApptsDTO } from './dto/appts.dto';
-import {
-    UserNotFoundException,
-    ApptNotFoundException,
-} from '../exceptions/NotFound.exception';
+
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { PrismaError } from '../utils/prismaError';
 import { User } from '../graphql';
@@ -27,7 +24,7 @@ export class AppointmentsService {
             },
         });
 
-        if (!appt) throw new ApptNotFoundException(parseInt(id));
+        if (!appt) throw new NotFoundException(parseInt(id));
 
         return appt;
     }
@@ -50,7 +47,7 @@ export class AppointmentsService {
             },
         });
 
-        if (!userExist) throw new UserNotFoundException(parseInt(filter.user));
+        if (!userExist) throw new NotFoundException(parseInt(filter.user));
 
         const startDate = new Date(Date.parse(filter.start_date));
         const endDate = new Date(Date.parse(filter.end_date));
@@ -185,7 +182,7 @@ export class AppointmentsService {
                 error instanceof PrismaClientKnownRequestError &&
                 error.code === PrismaError.RecordDoesNotExist
             ) {
-                throw new ApptNotFoundException(parseInt(id));
+                throw new NotFoundException(parseInt(id));
             }
             throw error;
         }

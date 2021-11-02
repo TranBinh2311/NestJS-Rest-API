@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../../../src/prisma/prisma.service");
-const NotFound_exception_1 = require("../exceptions/NotFound.exception");
 const runtime_1 = require("@prisma/client/runtime");
 const prismaError_1 = require("../utils/prismaError");
 let UsersService = class UsersService {
@@ -45,7 +44,7 @@ let UsersService = class UsersService {
             },
         });
         if (!user)
-            throw new NotFound_exception_1.UserNotFoundException(parseInt(id));
+            throw new common_1.NotFoundException();
         return user;
     }
     async users() {
@@ -72,7 +71,7 @@ let UsersService = class UsersService {
         catch (error) {
             if (error instanceof runtime_1.PrismaClientKnownRequestError &&
                 error.code === prismaError_1.PrismaError.RecordDoesNotExist) {
-                throw new NotFound_exception_1.UserNotFoundException(parseInt(id));
+                throw new common_1.NotFoundException();
             }
             throw error;
         }
@@ -87,7 +86,7 @@ let UsersService = class UsersService {
             },
         });
         if (!user)
-            throw new NotFound_exception_1.UserNotFoundException(parseInt(id));
+            throw new common_1.NotFoundException();
         const deleteUser = this.prisma.user.delete({
             where: {
                 id: parseInt(id),

@@ -6,7 +6,7 @@ import { getApptsDTO } from './dto/appointment.dto';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { checkValid } from './valid/appointment.entity';
-import { ValidationPipe } from 'src/shared/validation.pip';
+import { ValidationPipe } from '../shared/validation.pip';
 import { PrismaService } from 'src/prisma/prisma.service';
 @Controller('appointment')
 @ApiTags('appointment')

@@ -24,7 +24,7 @@ let UsersService = class UsersService {
             where: { email: newUsers.email }
         });
         if (result) {
-            throw new common_1.HttpException('User is already exist', common_1.HttpStatus.BAD_REQUEST);
+            throw new common_1.BadRequestException('User is already exist');
         }
         return await this.prisma.user.create({
             data: newUsers
@@ -60,7 +60,7 @@ let UsersService = class UsersService {
         });
     }
     async remove(id) {
-        const result = await this.findOne(id);
+        const result = await this.prisma.user.findUnique({ where: { id } });
         if (!result) {
             throw new common_1.NotFoundException();
         }

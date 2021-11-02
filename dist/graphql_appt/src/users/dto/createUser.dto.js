@@ -15,29 +15,23 @@ const graphql_1 = require("../../graphql");
 class createUserDTO extends graphql_1.NewUser {
 }
 __decorate([
-    (0, class_validator_1.IsEmail)(),
-    (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], createUserDTO.prototype, "email", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], createUserDTO.prototype, "firstName", void 0);
+    __metadata("design:type", Number)
+], createUserDTO.prototype, "toUser", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
-], createUserDTO.prototype, "lastName", void 0);
+], createUserDTO.prototype, "startTime", void 0);
 __decorate([
-    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
-], createUserDTO.prototype, "birthdate", void 0);
+], createUserDTO.prototype, "endTime", void 0);
 __decorate([
-    (0, class_validator_1.IsEnum)(graphql_1.EnumUserRole),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
-], createUserDTO.prototype, "role", void 0);
+], createUserDTO.prototype, "timeZone", void 0);
 exports.createUserDTO = createUserDTO;
 //# sourceMappingURL=createUser.dto.js.map

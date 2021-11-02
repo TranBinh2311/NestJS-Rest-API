@@ -1,9 +1,8 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { User } from '@prisma/client';
 import { createUserDTO } from './dto/createUser.dto';
 import { updateUserDTO } from './dto/updateUser.dto';
-import { UserNotFoundException } from '../exceptions/NotFound.exception';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { PrismaError } from '../utils/prismaError';
 
@@ -45,7 +44,7 @@ export class UsersService {
             },
         });
 
-        if (!user) throw new UserNotFoundException(parseInt(id));
+        if (!user) throw new NotFoundException()
 
         return user;
     }
@@ -61,7 +60,7 @@ export class UsersService {
 
     // Update a user
     async updateUser(params: updateUserDTO): Promise<User> {
-        const { id, first_name, last_name, birthdate, role } = params;
+        const { id, firstName, lastName, birthdate, role } = params;
 
         try {
             const updateUser = await this.prisma.user.update({
@@ -69,7 +68,7 @@ export class UsersService {
                     id: parseInt(id),
                 },
                 data: {
-                    ...(first_name && { first_name }),
+                    ...(firstName && { first_name }),
                     ...(last_name && { last_name }),
                     ...(birthdate && { birthdate }),
                     ...(role && { role }),
@@ -85,34 +84,34 @@ export class UsersService {
                 error instanceof PrismaClientKnownRequestError &&
                 error.code === PrismaError.RecordDoesNotExist
             ) {
-                throw new UserNotFoundException(parseInt(id));
+                throw new NotFoundException()
             }
             throw error;
         }
     }
 
     // delete an user
-    async deleteUser(id: string): Promise<User> {
+    async deleteUser(id: number): Promise<User> {
         const user = await this.prisma.user.findUnique({
             where: {
-                id: parseInt(id),
+                id
             },
             include: {
                 appointments: true,
             },
         });
 
-        if (!user) throw new UserNotFoundException(parseInt(id));
+        if (!user) throw new NotFoundException()
 
         const deleteUser = this.prisma.user.delete({
             where: {
-                id: parseInt(id),
+                id
             },
         });
 
         const deleteAppts = this.prisma.appointment.deleteMany({
             where: {
-                userId: parseInt(id),
+                userId: id,
             },
         });
 

@@ -2,6 +2,7 @@ import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { UsersService } from './users.service';
 import { createUserDTO } from './dto/createUser.dto';
 import { updateUserDTO } from './dto/updateUser.dto';
+import { ValidationPipe } from '../valid/validation.pipe';
 
 @Resolver()
 export class UsersResolver {
@@ -18,7 +19,7 @@ export class UsersResolver {
     }
 
     @Mutation('createUser')
-    async create(@Args('input') args: createUserDTO) {
+    async create(@Args('input' , ValidationPipe) args: createUserDTO) {
         return this.userService.createUser(args);
     }
 
@@ -28,7 +29,7 @@ export class UsersResolver {
     }
 
     @Mutation('deleteUser')
-    async delete(@Args('id') args: string) {
+    async delete(@Args('id') args: number) {
         return this.userService.deleteUser(args);
     }
 }

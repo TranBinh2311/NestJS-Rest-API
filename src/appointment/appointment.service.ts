@@ -1,14 +1,12 @@
 import { Appointment } from '.prisma/client';
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { getApptsDTO } from './dto/appointment.dto';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
-
 import { PrismaError } from '../utils/prismaError';
-import { emit } from 'process';
-import { NotFoundError } from 'rxjs';
+
 
 @Injectable()
 export class AppointmentService {

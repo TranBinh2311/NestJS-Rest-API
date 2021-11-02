@@ -14,30 +14,27 @@ export enum EnumUserRole {
 
 export class NewAppt {
     user: string;
-    name: string;
-    start_date: string;
-    end_date: string;
+    startTime: string;
+    endTime: string;
 }
 
 export class UpdateAppt {
     id: string;
-    name?: Nullable<string>;
-    start_date?: Nullable<string>;
-    end_date?: Nullable<string>;
+    startTime?: Nullable<string>;
+    endTime?: Nullable<string>;
 }
 
 export class FilterFindApptsByUser {
     user?: Nullable<string>;
     id?: Nullable<string>;
-    name?: Nullable<string>;
-    start_date?: Nullable<string>;
-    end_date?: Nullable<string>;
+    startTime?: Nullable<string>;
+    endTime?: Nullable<string>;
 }
 
 export class NewUser {
     email: string;
-    first_name: string;
-    last_name: string;
+    firstName: string;
+    lastName: string;
     birthdate?: Nullable<string>;
     role?: Nullable<EnumUserRole>;
     appointments?: Nullable<Nullable<string>[]>;
@@ -46,8 +43,8 @@ export class NewUser {
 export class UpdateUser {
     id: string;
     email?: Nullable<string>;
-    first_name?: Nullable<string>;
-    last_name?: Nullable<string>;
+    firstName?: Nullable<string>;
+    lastName?: Nullable<string>;
     birthdate?: Nullable<string>;
     role?: Nullable<EnumUserRole>;
 }
@@ -56,8 +53,8 @@ export class Appointment {
     id: string;
     user: User;
     name: string;
-    start_date: string;
-    end_date: string;
+    startTime: string;
+    endTime: string;
     createdAt: string;
 }
 
@@ -90,8 +87,8 @@ export abstract class IMutation {
 export class User {
     id: string;
     email: string;
-    first_name: string;
-    last_name: string;
+    firstName: string;
+    lastName: string;
     birthdate: string;
     appointments: Appointment[];
     role?: Nullable<EnumUserRole>;
