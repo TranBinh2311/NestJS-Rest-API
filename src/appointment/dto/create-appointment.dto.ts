@@ -3,7 +3,7 @@ import { IsNotEmpty, IsString } from "class-validator";
 import { error } from "console";
 import { checkValid } from '../valid/appointment.entity'
 
-export class CreateAppointmentDto extends checkValid  {
+export class CreateAppointmentDto {
 
     @ApiProperty()
     @IsNotEmpty()

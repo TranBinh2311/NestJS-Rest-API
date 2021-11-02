@@ -1,8 +1,8 @@
 type User {
     id: ID!
     email: String!
-    first_name: String!
-    last_name: String!
+    firstName: String!
+    lastName: String!
     birthdate: String!
     appointments: [Appointment!]!
     role: EnumUserRole
@@ -11,8 +11,8 @@ type User {
 
 input NewUser {
     email: String!
-    first_name: String!
-    last_name: String!
+    firstName: String!
+    lastName: String!
     birthdate: String
     role: EnumUserRole
     appointments: [ID]
@@ -21,8 +21,8 @@ input NewUser {
 input UpdateUser {
     id: ID!
     email: String
-    first_name: String
-    last_name: String
+    firstName: String
+    lastName: String
     birthdate: String
     role: EnumUserRole
 }

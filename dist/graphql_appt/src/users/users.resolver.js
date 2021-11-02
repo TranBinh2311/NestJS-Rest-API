@@ -17,6 +17,7 @@ const graphql_1 = require("@nestjs/graphql");
 const users_service_1 = require("./users.service");
 const createUser_dto_1 = require("./dto/createUser.dto");
 const updateUser_dto_1 = require("./dto/updateUser.dto");
+const validation_pipe_1 = require("../valid/validation.pipe");
 let UsersResolver = class UsersResolver {
     constructor(userService) {
         this.userService = userService;
@@ -52,7 +53,7 @@ __decorate([
 ], UsersResolver.prototype, "post", null);
 __decorate([
     (0, graphql_1.Mutation)('createUser'),
-    __param(0, (0, graphql_1.Args)('input')),
+    __param(0, (0, graphql_1.Args)('input', validation_pipe_1.ValidationPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [createUser_dto_1.createUserDTO]),
     __metadata("design:returntype", Promise)

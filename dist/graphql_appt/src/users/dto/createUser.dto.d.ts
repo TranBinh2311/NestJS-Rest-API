@@ -1,8 +1,7 @@
-import { NewUser, EnumUserRole } from '../../graphql';
+import { NewUser } from '../../graphql';
 export declare class createUserDTO extends NewUser {
-    readonly email: string;
-    readonly firstName: string;
-    readonly lastName: string;
-    readonly birthdate: string;
-    readonly role: EnumUserRole;
+    readonly toUser: number;
+    readonly startTime: string;
+    readonly endTime: string;
+    readonly timeZone: string;
 }

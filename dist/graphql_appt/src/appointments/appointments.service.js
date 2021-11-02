@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppointmentsService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../../../src/prisma/prisma.service");
-const NotFound_exception_1 = require("../exceptions/NotFound.exception");
 const runtime_1 = require("@prisma/client/runtime");
 const prismaError_1 = require("../utils/prismaError");
 let AppointmentsService = class AppointmentsService {
@@ -29,7 +28,7 @@ let AppointmentsService = class AppointmentsService {
             },
         });
         if (!appt)
-            throw new NotFound_exception_1.ApptNotFoundException(parseInt(id));
+            throw new common_1.NotFoundException(parseInt(id));
         return appt;
     }
     async appointments() {
@@ -47,7 +46,7 @@ let AppointmentsService = class AppointmentsService {
             },
         });
         if (!userExist)
-            throw new NotFound_exception_1.UserNotFoundException(parseInt(filter.user));
+            throw new common_1.NotFoundException(parseInt(filter.user));
         const startDate = new Date(Date.parse(filter.start_date));
         const endDate = new Date(Date.parse(filter.end_date));
         const appointments = await this.prisma.appointment.findMany({
@@ -97,7 +96,7 @@ let AppointmentsService = class AppointmentsService {
         catch (error) {
             if (error instanceof runtime_1.PrismaClientKnownRequestError &&
                 error.code === prismaError_1.PrismaError.RecordDoesNotExist) {
-                throw new NotFound_exception_1.ApptNotFoundException(parseInt(id));
+                throw new common_1.NotFoundException(parseInt(id));
             }
             throw error;
         }

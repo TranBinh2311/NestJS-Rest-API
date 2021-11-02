@@ -1,23 +1,7 @@
+import { PartialType } from '@nestjs/graphql';
 import { IsString, IsEmail, IsEnum } from 'class-validator';
-import { UpdateUser, EnumUserRole } from '../../graphql';
+import { createUserDTO } from './createUser.dto';
 
-export class updateUserDTO extends UpdateUser {
-    @IsString()
-    id: string;
+export class updateUserDTO extends PartialType(createUserDTO) {
 
-    @IsEmail()
-    @IsString()
-    email: string;
-
-    @IsString()
-    first_name: string;
-
-    @IsString()
-    last_name: string;
-
-    @IsString()
-    birthdate: string;
-
-    @IsEnum(EnumUserRole)
-    role: EnumUserRole;
 }
