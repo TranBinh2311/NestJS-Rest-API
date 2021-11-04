@@ -52,7 +52,7 @@ export class UsersService {
     return result;
   }
   /*------------------------------------------UPDATE USER----------------------------------------------------------------------*/
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: number, updateUserDto: UpdateUserDto):Promise<User> {
 
     const result = await this.prisma.user.findUnique({ where: { id } })
     if (!result) {

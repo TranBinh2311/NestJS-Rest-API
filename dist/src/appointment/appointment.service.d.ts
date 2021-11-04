@@ -1,5 +1,5 @@
 import { Appointment } from '.prisma/client';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { getApptsDTO } from './dto/appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 export declare class AppointmentService {

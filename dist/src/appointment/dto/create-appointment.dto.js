@@ -12,8 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateAppointmentDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
-const appointment_entity_1 = require("../valid/appointment.entity");
-class CreateAppointmentDto extends appointment_entity_1.checkValid {
+class CreateAppointmentDto {
 }
 __decorate([
     (0, swagger_1.ApiProperty)(),

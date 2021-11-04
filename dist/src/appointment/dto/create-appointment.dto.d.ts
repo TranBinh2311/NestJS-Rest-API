@@ -1,5 +1,4 @@
-import { checkValid } from '../valid/appointment.entity';
-export declare class CreateAppointmentDto extends checkValid {
+export declare class CreateAppointmentDto {
     readonly toUser: number;
     readonly startTime: string;
     readonly endTime: string;
