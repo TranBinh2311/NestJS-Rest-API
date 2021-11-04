@@ -46,7 +46,7 @@ __decorate([
         status: 201,
         description: 'Create User'
     }),
-    __param(0, (0, common_1.Body)(new validation_pip_1.ValidationPipe())),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),
     __metadata("design:returntype", Promise)

@@ -1,66 +1,92 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UsePipes, UseGuards } from '@nestjs/common';
+import { LoggerService } from './../logger/logger.service';
+import {
+    Body,
+    ClassSerializerInterceptor,
+    Controller,
+    Delete,
+    Get,
+    Logger,
+    Param,
+    ParseIntPipe,
+    Patch,
+    Post,
+    UseGuards,
+    UseInterceptors,
+    UsePipes,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ValidationPipe } from '../shared/validation.pip';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.gaurd';
+import { createUserDTO } from './dto/createUser.dto';
+import { updateUserDTO } from './dto/updateUser.dto';
+import { UpdateUserEntity } from './entities/updateUser.entity';
+import { UserEntity } from './entities/user.entity';
+import {
+    ApiBearerAuth,
+    ApiCreatedResponse,
+    ApiOkResponse,
+    ApiResponse,
+    ApiTags,
+} from '@nestjs/swagger';
+import { JwtAuthGuard } from './../auth/strategy/jwt-auth.guard';
+import { ValidationPipe } from './../shared/validation.pipe';
 
-
+@ApiBearerAuth()
 @Controller('users')
-@ApiTags('users')
+@ApiTags('Users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+    constructor(private readonly userService: UsersService) {}
+    private readonly logger: LoggerService = new Logger(UsersController.name);
 
-  @Post()
-  @ApiResponse({
-    status: 201,
-    description: 'Create User'
-  })
-  async create(@Body(new ValidationPipe()) newUsers: CreateUserDto) {
-    return this.usersService.create(newUsers);
-  }
+    // @UseGuards(JwtAuthGuard)
+    @Get()
+    @ApiOkResponse({ type: UserEntity, isArray: true })
+    async findAllUsers() {
+        this.logger.verbose('Retrieving all users.');
+        return this.userService.users();
+    }
 
-  /*---------------------------------------------GET ALL USERS-------------------------------------------------------------------*/
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @Get()
-  @ApiResponse({
-    status: 200,
-    description: 'Get All User'
-  })
-  async findAll() {
-    return this.usersService.findAll();
-  }
-  /*---------------------------------------------GET USER BY ID-------------------------------------------------------------------*/
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @Get(':id')
-  @ApiResponse({
-    status: 200,
-    description: 'Get User by ID'
-  })
-  async findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.findOne(id);
-  }
-  /*------------------------------------------------UPDATE USER----------------------------------------------------------------*/
-  @Patch('updateUser/:id')
-  @ApiResponse({
-    status: 200,
-    description: 'Update User'
-  })
-  async update(@Param('id', ParseIntPipe) id: number, @Body(new ValidationPipe) updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
-  }
+    // @UseGuards(JwtAuthGuard)
+    @UseInterceptors(ClassSerializerInterceptor)
+    @Get(':id')
+    @ApiOkResponse({ type: UserEntity })
+    async findOneUser(@Param('id', ParseIntPipe) id: number) {
+        this.logger.verbose(`Retrieving specific user with id: ${id}`);
+        return new UserEntity(await this.userService.user(id));
+    }
 
-  /*-------------------------------------------------REMOVE USER---------------------------------------------------------------*/
-  @ApiResponse({
-    status: 204,
-    description: 'Remove/Detele User'
-  })
-  @Delete('deteleUser/:id')
-  async remove(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.remove(id);
-  }
+    // @UseGuards(JwtAuthGuard)
+    @Post('createUser')
+    @UsePipes(new ValidationPipe())
+    @ApiCreatedResponse({
+        type: createUserDTO,
+        description: 'The record has been successfully created.',
+    })
+    async createOneUser(@Body() input: createUserDTO) {
+        this.logger.verbose('Create an user.');
+        return this.userService.createUser(input);
+    }
 
+    @UseGuards(JwtAuthGuard)
+    @UseInterceptors(ClassSerializerInterceptor)
+    @Patch('updateUser/:id')
+    @ApiOkResponse({
+        type: UpdateUserEntity,
+        description: 'The record has been successfully update',
+    })
+    async updateOneUser(
+        @Param('id', ParseIntPipe) id: number,
+        @Body() input: updateUserDTO,
+    ) {
+        this.logger.verbose(`Update an user with id: ${id}`);
+        return new UpdateUserEntity(
+            await this.userService.updateUser(id, input),
+        );
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Delete('deleteUser/:id')
+    @ApiResponse({ status: 204, description: 'Delete Success' })
+    async deleteOneUser(@Param('id', ParseIntPipe) id: number) {
+        this.logger.verbose(`Delete an user with id: ${id}`);
+        return this.userService.deleteUser(id);
+    }
 }

@@ -1,76 +1,65 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { LogDto } from './dto/login.dto';
-import { PrismaModule } from '../prisma/prisma.module';
+import { BadRequestException, Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { Admin } from '@prisma/client';
+import { LoginAdminDto } from './dto/loginAdmin.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { LoggerService } from './../logger/logger.service';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '.prisma/client';
-import { PrismaService } from '../prisma/prisma.service';
-import { NotFoundError } from 'rxjs';
-import { Auth } from './entities/auth.entity';
-import { UsersService } from '../users/users.service';
-import { JwtPayload } from 'jsonwebtoken';
-import { UserDto } from 'src/users/dto/user.dto';
-import { emit } from 'process';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-    
     constructor(
-        private readonly usersService: UsersService,
-        private readonly jwtService: JwtService,
-        private readonly prisma: PrismaService
-      ) {}
-    
-    //   async register(userDto: CreateUserDto): Promise<RegistrationStatus> {
-    //     let status: RegistrationStatus = {
-    //       success: true,
-    //       message: 'user registered',
-    //     };
-    
-    //     try {
-    //       await this.usersService.create(userDto);
-    //     } catch (err) {
-    //       status = {
-    //         success: false,
-    //         message: err,
-    //       };
-    //     }
-    
-    //     return status;
-    //   }
-       async getAll()
-       {
-           return "Hello";
-       }    
+        private prisma: PrismaService,
+        private jwtService: JwtService,
+    ) { }
+    private readonly logger: LoggerService = new Logger(AuthService.name);
 
-      async login(loginUserDto: LogDto): Promise<Auth> {
-        // find user in db
-        const user = await this.usersService.findByLogin(loginUserDto);
-    
-        // generate and sign token
-        const token = this._createToken(user);
-    
-        return {
-          firstName: user.firstName,
-          ...token,
-        };
-      }
-    
-      async validateUser(email: string): Promise<UserDto> {
-        const user = await this.prisma.user.findUnique({where:{email}})
-        if (!user) {
-            throw new UnauthorizedException(`Invalid token`);
+    async signUp(input: LoginAdminDto): Promise<Admin> {
+
+        const accountExists = await this.prisma.admin.findUnique({
+            where: {
+                username: input.username,
+            },
+        });
+
+        if (accountExists) {
+            this.logger.warn('Tried to create an account that already exists');
+            throw new BadRequestException('account is already exist');
         }
-        return user;
-      }
-    
-      private _createToken({ firstName }: UserDto): any {
-        const expiresIn = process.env.EXPIRESIN;
-    
-        const user: JwtPayload = { firstName };
-        const accessToken = this.jwtService.sign(user);
-        return {
-          expiresIn,
-          accessToken,
-        };
-      }
+
+        // Transform body into DTO
+        const adminDTO = new LoginAdminDto();
+        adminDTO.username = input.username;
+        adminDTO.password = bcrypt.hashSync(input.password, 10);
+
+        return this.prisma.admin.create({ data: adminDTO });
+    }
+
+    async login(acc: LoginAdminDto): Promise<Record<string, any>> {
+        // Get user information
+        const accDetails = await this.prisma.admin.findUnique({
+            where: {
+                username: acc.username,
+            },
+        });
+
+        if (!accDetails){
+            this.logger.warn('Tried to access account that does not exist');
+            throw new NotFoundException('User with this username does not exist');
+        }
+
+        // Check if the given password match with saved password
+        const isValid = bcrypt.compareSync(acc.password, accDetails.password);
+        // console.log(isValid);
+        if (isValid) {
+            return {
+                username: acc.username,
+                access_token: this.jwtService.sign({
+                    username: acc.username,
+                }),
+            };
+        } else {
+            throw new UnauthorizedException('Invalid credentials')
+        }
+    }
 }

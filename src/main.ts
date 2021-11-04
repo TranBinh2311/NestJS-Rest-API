@@ -1,24 +1,26 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
+import { LoggerService } from './logger/logger.service';
+import { ConfigService } from '@nestjs/config';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule,
-    // {
-    //   logger: ['error', 'warn']
-    // })
-  );
-  app.setGlobalPrefix('api')
+    const app = await NestFactory.create(AppModule);
+    const configService: ConfigService = app.get(ConfigService);
+    const logger: LoggerService = new LoggerService();
 
-  const options = new DocumentBuilder()
-    .setTitle(' Appoinment API')
-    .setDescription('Appoinment Api')
-    .setVersion('5.1.0')
-    .addBearerAuth()
-    .build()
+    const config = new DocumentBuilder()
+        .setTitle('Appointment API')
+        .setDescription('Appointment API')
+        .setVersion('1.0')
+        .build();
 
-  const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('api', app, document);
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api', app, document);
 
-  await app.listen(3000);
+    app.enableCors();
+    logger.verbose(`Database URL => ${configService.get('database.URL')}`);
+    logger.verbose(`Application listening on port => ${process.env.PORT}`);
+    await app.listen(process.env.PORT);
 }
 bootstrap();

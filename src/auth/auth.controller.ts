@@ -1,33 +1,32 @@
-import { Body, Controller, Get, Post, UseGuards, Param } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiTags, ApiResponse } from '@nestjs/swagger';
-import { ValidationPipe } from 'src/shared/validation.pip';
+import { Body, Controller, Logger, Post } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { LoggerService } from 'src/logger/logger.service';
 import { AuthService } from './auth.service';
-import { LogDto } from './dto/login.dto';
-import { JwtAuthGuard } from './guards/jwt-auth.gaurd';
-import { LocalAuthGuard } from './guards/local-auth.gaurd';
+import { LoginAdminDto } from './dto/loginAdmin.dto';
 
-
-
-@ApiTags('auth')
 @Controller('auth')
+@ApiTags('Authenticate')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+    constructor(private readonly authService: AuthService) {}
+    private readonly logger: LoggerService = new Logger(
+        AuthController.name,
+    );
 
-  //@UseGuards(LocalAuthGuard)
-  @Post('login')
-  async login(@Body(new ValidationPipe) input : LogDto) {
-      return this.authService.login(input);
-  }
+    @Post('signUp')
+    // @ApiOkResponse({ type: createApptDTO, description: 'OK', isArray: true })
+    async signUpAccount(@Body() input: LoginAdminDto) {
+        this.logger.verbose(
+            `Create new account: ${JSON.stringify(input)}`,
+        );
+        return this.authService.signUp(input);
+    }
 
-  @Get()
-  @UseGuards(LocalAuthGuard)
-  @ApiBearerAuth()
-  @ApiResponse({
-    status: 200,
-    description: 'Get All User'
-  })
-  async getAll() {
-    return this.authService.getAll();
-}
+    @Post('login')
+    // @ApiOkResponse({ type: createApptDTO, description: 'OK', isArray: true })
+    async login(@Body() input: LoginAdminDto) {
+        this.logger.verbose(
+            `login with account: ${JSON.stringify(input)}`,
+        );
+        return this.authService.login(input);
+    }
 }

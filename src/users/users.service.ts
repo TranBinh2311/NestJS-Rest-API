@@ -1,98 +1,82 @@
-import { User } from '.prisma/client';
-import { HttpException, HttpStatus, Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { LoggerService } from '../logger/logger.service';
-import { PrismaService } from '../prisma/prisma.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { LoginUserDto } from './dto/login.dto';
-import { UserDto } from './dto/user.dto';
-import { toUserDto } from '../shared/mapped';
+import { LoggerService } from './../logger/logger.service';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { PrismaService } from './../prisma/prisma.service';
+import { User } from '@prisma/client';
+import { createUserDTO } from './dto/createUser.dto';
+import { updateUserDTO } from './dto/updateUser.dto';
+import { UserNotFoundException } from '../exceptions/NotFound.exception';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { PrismaError } from '../utils/prismaError';
 
 @Injectable()
 export class UsersService {
+    constructor(private prisma: PrismaService) { }
+    private readonly logger: LoggerService = new Logger(UsersService.name);
 
-  constructor(private prisma: PrismaService, private myLogger: LoggerService) { }
-  /*------------------------------------------CREATE USERS----------------------------------------------------------------------*/
-  async create(newUsers: CreateUserDto): Promise<User> {
-    const result = await this.prisma.user.findUnique(
-      {
-        where: { email: newUsers.email }
-      }
-    )
-    if (result) {
-      throw new  BadRequestException('User is already exist');
+    // Create a new
+    async createUser(input: createUserDTO): Promise<User> {
+        const user = await this.prisma.user.findUnique({
+            where: {
+                email: input.email,
+            },
+        });
+
+        if (user) {
+            this.logger.warn('Tried to create an user that already exists');
+            throw new BadRequestException('User is already exist');
+        }
+
+        return this.prisma.user.create({ data: input });
     }
 
-    return await this.prisma.user.create({
-      data: newUsers
-    })
-  }
+    // Get a single user
+    async user(id: number): Promise<User> {
+        const user = await this.prisma.user.findUnique({
+            where: { id },
+        });
 
-  /*------------------------------------------GET ALL USER WITHOUT APPOINMENT ----------------------------------------------------------------------*/
-  async findAll(): Promise<User[]> {
-    //this.myLogger.log(`Find All User`);
-    return await this.prisma.user.findMany({
-      include: {
-        appointments: false,
-      }
-    });
-  }
-  /*------------------------------------------GET USER BY ID----------------------------------------------------------------------*/
-  async findOne(id: number) {
-    const result = await this.prisma.user.findUnique({
-      where: { id },
-      include: {
-        appointments: true
-      }
-    })
-    if (!result) {
-      //this.myLogger.warn('User has not already exists');
-      throw new NotFoundException();
+        if (!user) {
+            this.logger.warn('Tried to access a user that does not exist');
+            throw new UserNotFoundException(id);
+        }
+
+        return user;
     }
-    return result;
-  }
-  /*------------------------------------------UPDATE USER----------------------------------------------------------------------*/
-  async update(id: number, updateUserDto: UpdateUserDto):Promise<User> {
 
-    const result = await this.prisma.user.findUnique({ where: { id } })
-    if (!result) {
-      //this.myLogger.warn('User has not already exists');
-      // user not found
-      throw new NotFoundException();
+    // Get multiple users
+    async users(): Promise<User[]> {
+        return this.prisma.user.findMany();
     }
-    return await this.prisma.user.update({
-      where: { id },
-      data: updateUserDto,
-    })
 
-  }
+    // Update a user
+    async updateUser(id: number, params: updateUserDTO): Promise<User> {
+        const user = await this.prisma.user.findUnique({
+            where: { id },
+        });
+        if (!user) {
+            this.logger.warn('Tried to access a user that does not exist');
+            throw new UserNotFoundException(id);
+        }
+        return await this.prisma.user.update({
+            where: { id },
+            data: { ...params },
+        });
 
-  /*------------------------------------------REMOVE USER----------------------------------------------------------------------*/
-  async remove(id: number): Promise<User> {
-
-    const result = await this.prisma.user.findUnique({where:{id}})
-    if (!result) {
-      throw new NotFoundException();
     }
-    await this.prisma.user.delete({ where: { id } })
-    return result;
-  }
-  /*------------------------------------------FIND BY LOGIN----------------------------------------------------------------------*/
-  async findByLogin(input: LoginUserDto): Promise<UserDto> {
-    const user = await this.prisma.user.findUnique({
-      where: { email: input.email }
-    });
-    if (!user) {
-      throw new NotFoundException(`${input.email} is not exist`)
-    }
-    return toUserDto(user)
-  }
 
+    // delete an user
+    async deleteUser(id: number): Promise<User> {
+        const user = await this.prisma.user.findUnique({
+            where: { id },
+        });
+
+        if (!user) {
+            this.logger.warn('Tried to access a user that does not exist');
+            throw new UserNotFoundException(id);
+        }
+
+        return this.prisma.user.delete({
+            where: { id },
+        });
+    }
 }
-
-
-    //  const areEqual = await comparePasswords(user.password, password)
-
-    //   if (!areEqual) {
-    //     throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);    
-    //    }

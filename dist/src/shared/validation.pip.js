@@ -22,7 +22,7 @@ let ValidationPipe = class ValidationPipe {
         const object = (0, class_transformer_1.plainToClass)(metatype, value);
         const errors = await (0, class_validator_1.validate)(object);
         if (errors.length > 0) {
-            throw new common_1.HttpException(`Validation failed: ${this.formatErrors(errors)}`, common_1.HttpStatus.BAD_REQUEST);
+            throw new common_1.BadRequestException(`Validation failed: ${this.formatErrors(errors)}`);
         }
         return value;
     }
